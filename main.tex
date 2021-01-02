@@ -4,7 +4,7 @@
 %%% AUTHOR: Salvatore Cardamone
 %%%         University of Cambridge, 2017
 
-\documentclass[preprint]{revtex4-1}
+\documentclass[preprint,nofootinbib]{revtex4-1}
 
 %%%
 %%% Package inclusions and package-specific settings 
@@ -22,6 +22,7 @@
 \usepackage{rotating}
 \usepackage{enumitem}
 \usepackage[toc,page]{appendix}
+\usepackage[mathscr]{euscript}
 
 %%%
 %%% Generic LaTeX settings and commands
@@ -37,7 +38,12 @@
 %%%
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\im}{{i\mkern1mu}}
-\newcommand{\dx}[1]{\mathrm{d}#1}
+\newcommand{\ex}[1]{\mathrm{e}^{#1}}
+\newcommand{\dx}[1]{\mathrm{d}#1\mkern1mu}
+\newcommand{\dsqx}[1]{\mathrm{d}^2#1\mkern1mu}
+\newcommand{\infsum}[1]{\sum_{#1=-\infty}^\infty}
+\DeclareMathOperator{\sinc}{sinc}
+
 % Get rid of stupid revtex numbering
 \def\thesection{\arabic{section}}
 \def\thesubsection{\arabic{section}.\arabic{subsection}}
@@ -68,6 +74,13 @@
 %%% Actual document files
 %%%
 \input{sections/lecture_1.tex}
+\input{sections/lecture_2.tex}
+\input{sections/lecture_3.tex}
+\input{sections/lecture_4.tex}
+\input{sections/lecture_5.tex}
+\input{sections/lecture_6.tex}
+\input{sections/lecture_7.tex}
+\input{sections/lecture_8.tex}
 
 %%%
 %%% Appendices

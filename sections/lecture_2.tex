@@ -1,0 +1,147 @@
+\section{Lecture 2: Linear Time-Invariant Systems}
+
+\subsection{System Properties}
+%
+\subsubsection{Causality}
+%
+The output at time $n$ only depends on the input up to time $n$. For instance,
+$y[n] = x[n] - 2x[n-1]$ is causal, whereas $y[n] = x[n+3]$ is not causual.
+Real-time signals are necessarily causal, whereas signals used in image processing
+are not since the signal index denotes a pixel -- pixels ahead of the current
+pixel are accessible at an instance of time.
+
+\subsubsection{Linearity}
+%
+For a system to be linear, it must exhibit \textbf{additivity} and
+\textbf{homogeneity}. Additivity requires that if $f(x_1) = y_1$ and
+$f(x_2) = y_2$, then $f(x_1 + x_2) = y_1 + y_2$. Homogeneity requires that
+$f(ax_1) = ay_1$ for some scalar $a$. Combining both of these properties, we can
+state that linearity is given by the requirement that
+%
+\begin{displaymath}
+  f(ax_1[n] + bx_2[n]) = ay_1[n] + by_2[n] \,,
+\end{displaymath}
+%
+for any $x_1,x_2$.
+
+\begin{exmp}
+  Consider the function $y[n] = x[n] - 2x[n-1]$. Then, for $x_1$ and $x_2$, we have
+  %
+  \begin{align*}
+    y_1[n] &= x_1[n] - 2x_1[n-1] \,, \\
+    y_2[n] &= x_2[n] - 2x_2[n-1] \,.
+  \end{align*}
+  %
+  The response to the input $z[n] = x_1[n] + x_2[n]$ is then
+  %
+  \begin{align*}
+    y_z[n] = z[n] - 2z[n-1] &= (x_1[n] + x_2[n]) - 2(x_1[n-1] + x_2[n-1]) \\
+    &= (x_1[n] - 2x_1[n-1]) + (x_2[n] - 2x_2[n-1) \\
+    &= y_1[n] + y_2[n] \,.
+  \end{align*}
+  %
+  Consequently, the system is additive.
+\end{exmp}
+%
+\begin{exmp}
+  Consider the same function as used in the previous example. The response to the
+  input $z[n] = ax_1[n]$ is then
+  %
+  \begin{align*}
+    y_z[n] = z[n] - 2z[n-1] &= ax_1[n] - 2ax_1[n-1] = a(x_1[n] - 2x[n-1]) \\
+    &= ay_1[n] \,.
+  \end{align*}
+  %
+  Consequently, the system is homogeneous.
+\end{exmp}
+%
+\begin{exmp}
+  Consider the function $y[n] = 3x[n] + 5$. The response to the input
+  $z[n] = ax_1[n] + bx_2[n]$ is then
+  %
+  \begin{displaymath}
+    y_z[n] = 3(ax_1[n] + bx_2[n]) + 5 \,.
+  \end{displaymath}
+  %
+  However, $y_1[n] + y_2[n] = (3ax_1[n] + 5) + (3bx_2[n] + 5) = 3(ax_1[n] + bx_2[n]) + 10$,
+  and so we fail to meet the additivity criterion. The system is then not linear.
+\end{exmp}
+
+\subsubsection{Time Invariance}
+%
+The system behaves the same way regardless of when the input is applied. So if
+$f(x[n]) = y[n]$, then $f(x[n-n_0]) = y[n-n_0]$.
+%
+\begin{exmp}
+  Consider the function $y[n] = x[n] - 2x[n-1]$. Then $y[n-n_0] = x[n-n_0] - 2x[n-n_0-1]$.
+  We create a delayed signal $z[n] = x[n-n_0]$, such that
+  %
+  \begin{displaymath}
+    y_z[n] = x[n-n_0] - 2x[n-n_0-1] \,,
+  \end{displaymath}
+  %
+  which is equal to $y[n-n_0]$, and so the system is time-invariant.
+\end{exmp}
+%
+\begin{exmp}
+  Consider the function $y[n] = x[n^2]$. Then
+  $y[n-n_0] = x[(n-n_0)^2] = x[n^2-2nn_0 + n_0^2]$. As before, we create a delayed signal
+  $z[n] = x[n-n_0]$, such that
+  %
+  \begin{displaymath}
+    y_z[n] = z[n^2] = x[n^2 - n_0] \,.
+  \end{displaymath}
+  %
+  This is clearly not the same as $y[n-n_0]$, and so the system is not time-invariant.
+\end{exmp}
+%
+A useful way to verify time-invariance is through use of the delta function. We first evaluate
+the response to the input $x_1[n] = \delta[n]$, and then the response to the delayed input
+$x_2[n] = \delta[n-1]$. For the function in the example above, $y[n] = x[n^2]$, we see that
+the response to $x_1[n]$ yields $y_1[n] = \delta[n]$. However, QQ
+
+\subsection{Linear Time-Invariant (LTI) Systems}
+%
+Real-world systems are often modelled as LTI systems since they're often a very good approximation,
+and their analysis is very easy. The key concept that facilitates their treatment is that of
+superposition, such that
+%
+\begin{equation}
+  a_0x[n] + a_1x[n-1] + a_2x[n-2] + \hdots = a_0y[n] + a_1y[n-1] + a_2y[n-2] + \hdots \,.
+\end{equation}
+%
+This is important because we strive to use the delta function, and constructing signals as
+sums of shifted delta functions. The above is simply the expanded for of the sifting property
+of the delta function,
+%
+\begin{displaymath}
+  x[n] = \sum_{k=-\infty}^\infty \delta[n-k]x[k] \,,
+\end{displaymath}
+%
+such that the response of an LTI system, $H$, to a signal $x[n]$ is given by
+%
+\begin{equation}
+  H(x[n]) = H\left( \sum_{k=-\infty}^\infty \delta[n-k]x[k] \right) \,.
+\end{equation}
+%
+However, the $x[k]$ are effetively constant amplitudes that scale the delta functions,
+so we can invoke the linearity condition,
+%
+\begin{equation}
+  H(x[n]) = \sum_{k=-\infty}^\infty x[k] H(\delta[n-k]) \,.
+\end{equation}
+%
+Finally, by time-invariance,
+%
+\begin{equation}
+  H(x[n]) = \sum_{k=-\infty}^\infty x[k] h[n-k] \,.
+\end{equation}
+%
+This summation is a special mathematical form, referred to as convolution and denoted by
+%
+\begin{equation}
+  y[n] = x[n] \circledast h[n] \,,
+\end{equation}
+%
+where $h[n]$ is referred to as the unit impulse response, which fully characterises an LTI
+system.

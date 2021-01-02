@@ -1,0 +1,283 @@
+\section{Lecture 5: The Fourier Transform}
+
+Many signals are aperiodic, i.e. the time period $T \rightarrow\infty$. Such
+signals cannot be treated by the Fourier series since this results in
+$\omega_0\rightarrow 0$. Consequently, our sum over sinusoids of increasing
+frequency makes no sense. Rather, we need to exchange the summations for
+integrations over an infinitesimal in frequency,
+%
+\begin{displaymath}
+  x(t) = \sum_{k=-\infty}^\infty a_k\ex{\im k\omega_0 t} \xrightarrow[T\rightarrow\infty]{}
+  \int\dx{\omega} \ex{\im\omega t} \times \mathrm{something} \,.
+\end{displaymath}
+%
+\begin{figure}[!htb]
+  \includegraphics[width=\textwidth]{images/lecture_5_enforce_periodicity.JPG}
+  \caption{
+    An aperiodic signal (left) and its periodic form (right) where the time period
+    has been chosen to include some time during which the signal is zero.
+  }
+  \label{fig::lecture_5_enforce_periodicity}
+\end{figure}
+%
+Consider the aperiodic signal in Figure \ref{fig::lecture_5_enforce_periodicity}. We can force its periodicity (with
+period $T$) by duplicating it (also see Figure \ref{fig::lecture_5_enforce_periodicity}). We'll refer to this
+signal with ``enforced periodicity'' as $\tilde{x}(t)$, its Fourier synthesis
+being
+%
+\begin{displaymath}
+  \tilde{x}(t) = \sum_{k=-\infty}^\infty a_k\ex{\im k\omega_0 t} \,,
+\end{displaymath}
+%
+and Fourier analysis
+%
+\begin{displaymath}
+  a_k = \frac{1}{T}\int_{-T/2}^{T/2} \dx{t} \tilde{x}(t)\ex{-\im k\omega_0 t} \,.
+\end{displaymath}
+%
+However, on the domain $t\in[-\frac{T}{2},\frac{T}{2}]$, $\tilde{x}(t)$ is simply $x(t)$.
+And since this signal has no duplicates, the integral can be evaluated indefinitely
+%
+\begin{displaymath}
+  a_k = \frac{1}{T}\int \dx{t} x(t)\ex{-\im k\omega_0 t} \,.
+\end{displaymath}
+%
+Now, defining the \textbf{Fourier Transform} as
+%
+\begin{equation}
+  X(\omega) = \int \dx{t} x(t)\ex{-\im\omega t} \,,
+\end{equation}
+%
+which allows us to formulate the Fourier coefficients as
+%
+\begin{displaymath}
+  a_k = \frac{1}{T} X(k\omega_0) \,,
+\end{displaymath}
+%
+presenting us with the expression
+%
+\begin{displaymath}
+  \tilde{x}(t) = \frac{1}{T}\sum_{k=-\infty}^\infty X(k\omega_0)\ex{\im k\omega_0 t} \,.
+\end{displaymath}
+%
+Taking advantage of the fact that $\omega_0 = \frac{2\pi}{T}$,
+%
+\begin{displaymath}
+  \tilde{x}(t) = \frac{1}{2\pi}\sum_{k=-\infty}^\infty \left[X(k\omega_0)\ex{\im k\omega_0 t}\right]\omega_0 \,.
+\end{displaymath}
+%
+The above form allows us to gain some insight into this Fourier synthesis.
+Take the example in Figure \ref{fig::lecture_5_riemann}. We see that the summation in our expression for
+$\tilde{x}(t)$ is the Riemann sum, and
+%
+\begin{displaymath}
+  \lim_{\omega_0\rightarrow 0}\tilde{x}(t) = x(t) \,.
+\end{displaymath}
+%
+\begin{figure}[!htb]
+  \includegraphics[width=\textwidth]{images/lecture_5_riemann.JPG}
+  \caption{
+    The value of the periodic signal $\tilde{x}(t)$ at time $t$ is given by the Riemann
+    sum of Fourier coefficients multiplied by complex exponentials. The sum is built up
+    from rectangles of width $\omega_0$ along the frequency axis. Note that the absolute
+    values of the Fourier coefficients are plotted since these are complex-valued quantities.
+  }
+  \label{fig::lecture_5_riemann}
+\end{figure}
+%
+Since this limit coincides with $T\rightarrow\infty$, we are effectively
+pushing the duplicate copies of $x(t)$ infinitely far away, and
+%
+\begin{displaymath}
+  \lim_{\omega\rightarrow 0}\frac{\omega_0}{2\pi}\sum_{k=-\infty}^\infty \ex{\im k\omega_0 t}
+  = \frac{1}{2\pi}\int\dx{\omega}X(\omega)\ex{\im\omega t} \,.
+\end{displaymath}
+%
+We're finally left with a pair of expressions that are the continuous-time
+analogues of the Fourier synthesis and analysis:
+%
+\begin{align}
+  x(t) &= \frac{1}{2\pi}\int\dx{\omega} X(\omega)\ex{\im\omega t} \\
+  X(\omega) &= \int\dx{t} x(t)\ex{-\im\omega t} \,,
+\end{align}
+%
+the former being the \textbf{Inverse Fourier Transform} and the latter being
+the \textbf{Fourier Transform}.
+
+\subsection{Validity of the Fourier Transform}
+%
+We have a similar set of criteria to those of the Fourier series regarding
+the types of signals that are viable candidiates for the Fourier transform:
+%
+\begin{enumerate}
+\item $x(t)$ must be square-integrable, i.e. $\int|x(t)|^2 < \infty$.
+\item The signal must contain a finite number of extrema.
+\item The signal must contain a finite number of discontinuities.
+\end{enumerate}
+%
+We do not permit the Fourier transform of a periodic signal. While this appears
+to contravene (1), we note that the above criteria apply only to aperiodic signals.
+
+\subsection{Some Fourier Transform Identities}
+%
+\begin{enumerate}
+\item For the delta function, i.e. $x(t) = \delta(t)$, the Fourier transform is
+  given by
+  %
+  \begin{displaymath}
+    X(\omega) = \int \dx{t} \delta(t)\ex{-\im\omega t} = \ex{-\im\omega\times 0} = 1 \,,
+  \end{displaymath}
+  %
+  i.e. a constant for all frequencies.
+\item For the shifted delta function, i.e. $x(t) = \delta(t-t_0)$, the Fourier transform
+  is given by
+  %
+  \begin{displaymath}
+    X(\omega) = \int \dx{t} \delta(t-t_0)\ex{-\im\omega t} = \ex{-\im\omega t_0} \,.
+  \end{displaymath}
+  %
+  These coefficients all have the same magnitude, but rotated on the unit circle in
+  the complex plane, and so all have different phase.
+\item For the sum of delta functions $x(t) = \delta(t-t_0) + \delta(t+t_0)$,
+  %
+  \begin{displaymath}
+    X(\omega) = \ex{-\im\omega t_0} + \ex{-\im\omega t_0} = 2\cos(\omega t_0) \,.
+  \end{displaymath}
+\item For the decaying step function, $x(t) = \ex{-at}u(t)$, where $a > 0$,
+  %
+  \begin{align*}
+    X(\omega) &= \int \dx{t} \ex{-at}u(t)\ex{-\im\omega t} = \int_0^\infty\dx{t} \ex{-t(\im\omega + a)} \\
+    &= \left.-\frac{1}{(\im\omega + a)} \ex{-t(\im\omega + a)}\right|_0^\infty = \frac{1}{\im\omega + a} \,.
+  \end{align*}
+\item For the ``top hat'' function which is high on the domain $[-T/2,T/2]$
+  %
+  \begin{align*}
+    X(\omega) &= \int_{-T/2}^{T/2}\dx{t}x(t)\ex{-\im\omega t} = \int_{-T/2}^{T/2}\dx{t}\ex{-\im\omega t} \\
+    &= \left.-\frac{1}{\im\omega} \ex{-\im\omega t}\right|_{-T/2}^{T/2} = \frac{1}{\im\omega}
+    \left(\ex{\im\omega\frac{T}{2}} - \ex{-\im\omega\frac{T}{2}}\right) \\
+    &= \frac{2}{\omega}\sin\left(\omega\frac{T}{2}\right) = T\sinc\left(\frac{\omega T}{2}\right) \,.
+  \end{align*}
+\item For a ``top hat'' in the frequency domain which is high on the domain $[-\omega_0/2,\omega_0/2]$
+  %
+  \begin{align*}
+    x(t) &= \frac{1}{2\pi}\int \dx{\omega}X(\omega)\ex{\im\omega t}
+    = \frac{1}{2\pi}\int_{-\omega_0/2}^{\omega_0/2} \dx{\omega} \ex{\im\omega t} \\
+    &= \left. \frac{1}{2\pi\im t} \ex{\im\omega t}\right|_{-\omega_0/2}^{\omega_0/2}
+    = \frac{1}{2\pi\im t} \left(\ex{\im\frac{\omega_0}{2}t} - \ex{-\im\frac{\omega_0}{2}t}\right) \\
+    &= \frac{\omega_0}{2\pi}\sinc\left(\frac{\omega_0}{2}t\right) \,.
+  \end{align*}
+  %
+  This result demonstrates the duality of Fourier transform pairs -- a top hat in the
+  time domain becomes a $\sinc$ in the frequency domain, and \textit{vice versa}. Similarly,
+  a delta function in the time domain becomes a constant in the frequency domain and
+  \textit{vice versa}.
+\end{enumerate}
+%
+If $x(t)$ is periodic, then we can choose to use either the Fourier series or Fourier
+transform. Let's choose an impulse train, $x(t) = \sum_{k=-\infty}^\infty\delta(t - kT)$,
+a series of delta functions that are $T$ apart. Using the Fourier series,
+%
+\begin{displaymath}
+  a_k = \frac{1}{T}\int_{-T/2}^{T/2}\dx{t} x(t)\ex{-\im k\frac{2\pi}{T}t} = \frac{1}{T} \,,
+\end{displaymath}
+%
+as we have seen before since over the interval $[-T/2,T/2]$, the only non-zero point is
+at $t=0$.
+
+Suppose $x(t)$ is periodic, and consequently can be represented as a Fourier synthesis.
+Then, from the Fourier transform, we have that
+%
+\begin{displaymath}
+  X(\omega) = \int\dx{t}x(t)\ex{-\im\omega t}
+  = \sum_{k=-\infty}^\infty\int\dx{t}a_k\ex{\im k\omega_0 t}\ex{-\im\omega t}
+  = \sum_{k=-\infty}^\infty \int\dx{t}a_k\ex{\im (k\omega_0 - \omega) t} \,.
+\end{displaymath}
+%
+The integral in this final expression can be simplified through use of the identity
+%
+\begin{displaymath}
+  \int\dx{t}\ex{i(\omega - \omega_0)t} = 2\pi\delta(\omega - \omega_0) \,.
+\end{displaymath}
+%
+This can be proven through use of a test function $G(\omega)$,
+%
+\begin{displaymath}
+  \frac{1}{2\pi}\int\dx{\omega} G(\omega)\left(
+    \int\dx{t}\ex{\im(\omega-\omega_0)t}
+  \right)  = \int\dx{t}\ex{-\im\omega_0 t} \frac{1}{2\pi}\int\dx{\omega} G(\omega)\ex{\im\omega t} \,.
+\end{displaymath}
+%
+But this second integral is simply the inverse Fourier transform of $G(\omega)$,
+%
+\begin{displaymath}
+  \int\dx{t}\ex{-\im\omega_0 t} g(t) = G(\omega_0) \,,
+\end{displaymath}
+%
+which is subsequently Fourier transformed, and we see that the entire operation
+has simply changed the frequency variable from $\omega$ to $\omega_0$, as if
+we have selected for $\omega_0$ with a delta function. Consequently, returning to
+our expression for $X(\omega)$,
+%
+\begin{displaymath}
+  X(\omega) = \sum_{k=-\infty}^\infty \int\dx{t}a_k\ex{\im (k\omega_0 - \omega) t}
+  = \sum_{k=-\infty}^\infty 2\pi a_k \delta(\omega - k\omega_0) \,,
+\end{displaymath}
+%
+where we've taken advantage of the fact that $\delta(x) = \delta(-x)$ (think about
+this like a Kronecker delta: $\delta_{i,j} = \delta_{-i,-j}$). Our final form for
+$X(\omega)$ lends itself to being graphed -- it's simply an infinite series of shifted
+delta functions that are spaced by $\omega_0$, as can be see in Figure
+\ref{fig::lecture_5_fourier_deltas}.
+%
+\begin{figure}[!htb]
+  \includegraphics[width=\textwidth]{images/lecture_5_fourier_deltas.JPG}
+  \caption{
+    The Fourier transform of a periodic function is a series of shifted
+    delta functions spaced by $\omega_0$ in the frequency domain, each one
+    with magnitude $|2\pi a_k|$.
+  }
+  \label{fig::lecture_5_fourier_deltas}
+\end{figure}
+
+\begin{exmp}
+  Consider the spectrum with $X(\pm\omega_0) = \pi$ and $X(\omega) = 0$
+  for all other values of $\omega$. Conseqeuntly, we have
+  %
+  \begin{displaymath}
+    x(t) = \frac{1}{2\pi}\int\dx{\omega}X(\omega)\ex{\im\omega t}
+    = \frac{1}{2\pi} \int\dx{\omega}\delta(\omega\pm\omega_0)\ex{\im\omega t}
+    = \frac{1}{2\pi}\left[\pi\ex{\im\omega_0 t} + \pi\ex{-\im\omega_0 t}\right]
+    = \cos(\omega_0 t) \,,
+  \end{displaymath}
+  %
+  which satisfies our condition of $a_k = a_{-k}$ for real-valued signals.
+\end{exmp}
+
+\subsection{Properties of the Fourier Transform}
+%
+\begin{enumerate}
+\item (\textbf{Linearity}) Given the Fourier pairs $x(t) \Leftrightarrow X(\omega)$ and
+  $y(t) \Leftrightarrow Y(\omega)$, then
+  %
+  \begin{displaymath}
+    \alpha x(t) + \beta y(t) \Leftrightarrow \alpha X(\omega) + \beta Y(\omega) \,.
+  \end{displaymath}
+  %
+\item (\textbf{Time Shifting}) Time-shifting results in a phase change in the
+  spectral coefficients, $x(t-t_0) \Leftrightarrow X(\omega)\ex{-\im\omega t_0}$.
+\item (\textbf{Real Signals}) If $x(t)$ is real, then $\Re(\omega) = \Re(-\omega)$
+  and $\Im(\omega) = -\Im(-\omega)$, i.e. the real part is even and the imaginary
+  part is odd.
+\item (\textbf{Even and Odd Signals}) For real $x(t)$,
+  $\mathrm{Even}(x(t)) \Leftrightarrow \Re(X(\omega))$ and
+  $\mathrm{Odd}(x(t)) \Leftrightarrow \im\Im(X(\omega))$.
+\item (\textbf{Differentiability})
+  %
+  \begin{displaymath}
+    x^\prime(t) \Longleftrightarrow \im\omega X(\omega) \,,
+  \end{displaymath}
+  %
+  \begin{displaymath}
+    \int_{-\infty}^t \dx{\tau}x(\tau) \Longleftrightarrow \frac{1}{\im\omega}X(\omega) + \pi X(0)\delta(\omega) \,.
+  \end{displaymath}
+\end{enumerate}

@@ -7,6 +7,9 @@ physical intuition, we'll define a \textbf{signal} as a stream of information
 which originates from a sensor (and isn't necessarily indexed by time), and a
 \textbf{system} as an entity which processes signals and produces other signals.
 %
+Several types of transformation can be applied to a signal. Those that we'll find
+useful in the future are given in Figure \ref{fig::lecture_1_signal_operations}.
+%
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_1_signal_operations.JPG}
   \caption{
@@ -42,11 +45,16 @@ which is clearly wrong. Exchanging the order of operations,
 \end{displaymath}
 %
 as required. Consequently, transformations should be applied in the order
-\textbf{shift, flip, scale}.
+\textbf{shift, flip, scale}. This ordering is summarised in Figure
+\ref{fig::lecture_1_transformation_order}.
 %
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_1_transformation_order.JPG}
   \caption{
+    Ordering of transformations when dealing with a composite transformation, in
+    this example $x[-2n+3]$.
+    The original signal (top left) is first shifted (bottom left), reflected
+    about the vertical axis (bottom right) and finally scaled (top right).
   }
   \label{fig::lecture_1_transformation_order}
 \end{figure}
@@ -68,15 +76,15 @@ definitions of even and odd functions, we can verify the above representations a
 even and odd,
 %
 \begin{align*}
-  \mathrm{Even}(x[n]) &= \frac{1}{2}(x[n] + x[-n]) \xrightarrow[x(n)=x(-n)]{} \frac{1}{2}(x[n] + x[-n]) \,, \\
-  \mathrm{Odd}(x[n]) &= \frac{1}{2}(x[n] - x[-n]) \xrightarrow[x(n)=-x(-n)]{} \frac{1}{2}(x[n] - x[-n]) \,.
+  \mathrm{Even}(x[n]) &= \frac{1}{2}(x[n] + x[-n]) \Longrightarrow \frac{1}{2}(x[n] + x[-n]) \qquad (x[n] = x[-n])\,, \\
+  \mathrm{Odd}(x[n]) &= \frac{1}{2}(x[n] - x[-n]) \Longrightarrow \frac{1}{2}(x[n] - x[-n]) \qquad (x[n] = -x[-n])\,.
 \end{align*}
 
 
 \subsection{Special Signals}
 %
 The \textbf{delta function}, $\delta[n]$, is defined as being zero at all places where its argument
-is non-zero, and one where its argument is zero,
+is non-zero, and one where its argument is zero (see part (a) of Figure \ref{fig::lecture_1_delta_and_step}),
 %
 \begin{equation}
   \delta[n] = \left\{\begin{array}{ccl}
@@ -87,7 +95,8 @@ is non-zero, and one where its argument is zero,
 %
 Note that this is simply the Kronecker delta function, where the second argument is zero, i.e. $\delta_{n0}$.
 The \textbf{step function}, $u[n]$, is defined as being zero for all negative arguments and one for
-all arguments that are greater than or equal to zero,
+all arguments that are greater than or equal to zero (see part (b) of Figure
+\ref{fig::lecture_1_delta_and_step}),
 %
 \begin{equation}
   u[n] = \left\{\begin{array}{ccl}
@@ -99,8 +108,9 @@ all arguments that are greater than or equal to zero,
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_1_delta_and_step.JPG}
   \caption{
+    The delta function (left) and step function (right).
   }
-  \label{fig::lecture_1_step_function}
+  \label{fig::lecture_1_delta_and_step}
 \end{figure}
 %
 The step function can be written in terms of an infinite sum over shifted delta functions,
@@ -133,7 +143,8 @@ although note that in the discrete case, the derivative is well-defined, in cont
 case where the derivative at the transition is undefined.\\
 %
 In the same way as we have created the step function from an infinite sum of shifted delta functions,
-we can write any signal as an infinite sum of shifted and scaled delta functions,
+we can write any signal as an infinite sum of shifted and scaled delta functions (see Figure
+\ref{fig::lecture_1_sum_of_deltas}),
 %
 \begin{equation}
   x[n] = \sum_{k=-\infty}^\infty \delta[n-k] x[k]
@@ -146,74 +157,89 @@ of the delta function, which allows us to parse out a part of a signal that we w
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_1_sum_of_deltas.JPG}
   \caption{
+    A signal can be written as a sum of shifted and scaled delta functions.
   }
   \label{fig::lecture_1_sum_of_deltas}
 \end{figure}
 
 \subsection{Complex Number Review}
 %
-Foregoing the basic introduction to complex numbers, we'll just recap by thinking a general complex
-number, $x[t] = C\exp[at]$, where $C,a\in \mathbb{C}^2$, looks like. Writing $C = |C|\exp[\im\theta]$ in
+Foregoing the basic introduction to complex numbers, we'll just recap by taking a specific
+example whose form it will prove useful to know about in the future. Consider $x[t] = C\ex{at}$,
+where $C,a\in \mathbb{C}^2$. Writing $C = |C|\ex{\im\theta}$ in
 polar form and $a = r + \im\omega_0$ in rectilinear form, we can form the expression
 %
 \begin{align*}
-  x[t] &= C\exp[at] = |C|\exp[\im\theta]\exp[rt]\exp[\im\omega_0 t] = |C|\exp[rt]\exp[\im(\theta + \omega_0 t)] \\
-  &= |C|\exp[rt]\left[ \cos(\omega_0 t + \theta) + \im\sin(\omega_0 t + \theta) \right]
+  x[t] &= C\ex{at} = |C|\ex{\im\theta}\ex{rt}\ex{\im\omega_0 t} = |C|\ex{rt}\ex{\im(\theta + \omega_0 t)} \\
+  &= |C|\ex{rt}\left[ \cos(\omega_0 t + \theta) + \im\sin(\omega_0 t + \theta) \right]
 \end{align*}
 %
 Taking the real part of $x[t]$, we see that the function is the cosine whose amplitude is bounded by the
-exponential $|C|\exp[rt]$, which is either increasing or decreasing depending on whether $r$ is positive
-or negative, respectively. We'll encounter many signals of this form, and referring back to its behaviour
-will prove useful.
+exponential $|C|\ex{rt}$, which is either increasing or decreasing depending on whether $r$ is positive
+or negative, respectively. The imaginary part simply exchanges the cosine for a sine.
+We'll encounter many signals of this form, and referring back to its behaviour
+will prove useful. It is graphed in Figure \ref{fig::lecture_1_complex_numbers}.
 %
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_1_complex_numbers.JPG}
   \caption{
+    The real part of
+    $|C|\ex{rt}\left[ \cos(\omega_0 t + \theta) + \im\sin(\omega_0 t + \theta) \right]$
+    when $r < 0$ (left) and $r > 0$ (right). The red lines define the bounding exponentials.
   }
   \label{fig::lecture_1_complex_numbers}
 \end{figure}
 
 \subsection{Periodicity in Discrete Time}
 %
-Consider the function $exp[\im\omega_0 n]$, a phasor rotating around the complex plane with frequency
+Consider the function $\ex{\im\omega_0 n}$, a phasor rotating around the complex plane with frequency
 $\omega_0$. Adding a term to $\omega_0$ results in a phasor of higher frequency. For the continuous
-time case, the function $\exp[\im(\omega_0 + 2\pi)n]$ is a phasor whose frequency is $2\pi$ higher
-than $\exp[\im\omega_0 n]$. However, for the discrete time case, we have that $n\in\mathbb{N}$.
+time case, the function $\ex{\im(\omega_0 + 2\pi)n}$ is a phasor whose frequency is $2\pi$ higher
+than $\ex{\im\omega_0 n}$. However, for the discrete time case, we have that $n\in\mathbb{N}$.
 Factoring our phasor,
 %
 \begin{displaymath}
-  \exp[\im(\omega_0 + 2\pi)n] = \exp[\im\omega_0n]\exp[\im 2\pi n] = \exp[\im\omega_0n] \,.
+  \ex{\im(\omega_0 + 2\pi)n} = \ex{\im\omega_0n}\ex{\im 2\pi n} = \ex{\im\omega_0n} \,.
 \end{displaymath}
 %
-For a discrete time system, adding $2\pi$ to any frequency returns the same frequency, and
-consequently there's an upper bound on the frequencies we can explore in discrete time -- that
-upper bound is $\pi$ (i.e. two samples per period) since this results in
+For a discrete time system, adding $2\pi$ to any frequency returns the same frequency
+\footnote{
+  Note that this is different in the continuous time case where
+  $\ex{\im\omega t} \neq \ex{\im(\omega + 2\pi)t}$ since $t\in\mathbb{R}$. So while equality
+  holds when $t$ coincides with integer values, it must hold $\forall t$ if the function is to
+  be $2\pi$-periodic. Consequently, the continuous time phasor is not $2\pi$-periodic like
+  the discrete time case.
+}, and consequently there's an upper bound on the frequencies we can explore in discrete
+time -- that upper bound is $\pi$ (i.e. two samples per period) since this results in
 %
 \begin{displaymath}
-  \exp[\pi n] = \left\{\begin{array}{ccl}
+  \ex{\pi n} = \left\{\begin{array}{ccl}
   1 & & n\hspace{1mm}\mathrm{even} \\
   -1 & & n\hspace{1mm}\mathrm{odd} \\
   \end{array}\right. \,,
 \end{displaymath}
 %
-the highest frequency with which we can recover a sinusoid -- a sampling frequency
-higher than this will result in aliasing (to be covered in a later lecture).
+(see Figure \ref{fig::lecture_1_discrete_sampling}) the highest frequency with which we can recover
+a sinusoid -- a sampling frequency higher than this will result in aliasing (to be covered in a
+later lecture). 
 %
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_1_discrete_sampling.JPG}
   \caption{
+    A discretely sampled sinusoid of frequency $\pi$. Sampling the upper and lower bounds of
+    the sinusoid allows for its reconstruction. Were the sinusoid a higher frequency, two samples
+    could not be made per cycle.
   }
   \label{fig::lecture_1_discrete_sampling}
 \end{figure}
 %
-One needs to be careful in assessing whether a signal is periodic in discrete time. It is
-tempting to think that any sinusoid will surely satisfy this criterion, but this is not
-the case. We need to answer when is $\exp[\im\omega_0 n]$ periodic in discrete time. By
-the periodicity condition, $\exp[\im\omega_0(n+N)] = \exp[\im\omega_0n]$ for the signal
+One needs to be careful in assessing whether a signal is periodic in discrete time.
+We need to answer when is $\ex{\im\omega_0 n}$ periodic in discrete time. By
+the periodicity condition, $\ex{\im\omega_0(n+N)} = \ex{\im\omega_0n}$ for the signal
 to be periodic with period $N\in\mathbb{N}$. Factoring our expression,
 %
 \begin{displaymath}
-  \exp[\im\omega_0(n+N)] = \exp[\im\omega_0n]\exp[\im\omega_0N] \,,
+  \ex{\im\omega_0(n+N)} = \ex{\im\omega_0n}\ex{\im\omega_0N} \,,
 \end{displaymath}
 %
 meaning that we require this final term to equate to one, which is satisfied when $\omega_0N$

@@ -37,12 +37,18 @@
 %%% Macros and shortcuts
 %%%
 \renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\matr}[1]{\mathbf{#1}}
 \newcommand{\im}{{i\mkern1mu}}
 \newcommand{\ex}[1]{\mathrm{e}^{#1}}
 \newcommand{\dx}[1]{\mathrm{d}#1\mkern1mu}
 \newcommand{\dsqx}[1]{\mathrm{d}^2#1\mkern1mu}
 \newcommand{\infsum}[1]{\sum_{#1=-\infty}^\infty}
 \DeclareMathOperator{\sinc}{sinc}
+\newcommand{\red}[1]{\color{red}{#1}}
+\newcommand{\orn}[1]{\color{orange}{#1}}
+\newcommand{\yel}[1]{\color{yellow}{#1}}
+\newcommand{\grn}[1]{\color{green}{#1}}
+\newcommand{\blu}[1]{\color{blue}{#1}}
 
 % Get rid of stupid revtex numbering
 \def\thesection{\arabic{section}}
@@ -81,13 +87,16 @@
 \input{sections/lecture_6.tex}
 \input{sections/lecture_7.tex}
 \input{sections/lecture_8.tex}
+\input{sections/lecture_9.tex}
+\input{sections/lecture_10.tex}
+\input{sections/lecture_11.tex}
 
 %%%
 %%% Appendices
 %%%
 \newpage
 \begin{appendices}
-%\input{appendices/appendix}
+\input{appendices/appendix_1.tex}
 \end{appendices}
 
 \end{document}

@@ -110,7 +110,7 @@ another sinusoid,
   Consider the square wave signal in Figure \ref{fig::lecture_4_square_wave}.
   %
   \begin{figure}[!htb]
-%    \includegraphics[width=\textwidth]{images/lecture_4_square_wave.JPG}
+    \includegraphics[width=\textwidth]{images/lecture_4_square_wave.JPG}
     \caption{
       A square wave signal of period $2\pi$ and duty cycle of $0.5$.
     }
@@ -231,13 +231,13 @@ $\{a_k\}$. Then:
   $y(t) \Leftrightarrow \{b_k\}$,
   %
   \begin{displaymath}
-    x(t)y(t) \Longleftrightarrow \sum_{m=-\infty}^\infty a_m b_{k-m} = a \circledast b \,,
+    x(t)y(t) \Longleftrightarrow \sum_{m=-\infty}^\infty a_m b_{k-m} = a * b \,,
   \end{displaymath}
   %
   or conversely
   %
   \begin{displaymath}
-    x\circledast y = \int_0^T \dx{\tau} x(\tau)y(t-\tau) \Longleftrightarrow Ta_kb_k \,.
+    x* y = \int_0^T \dx{\tau} x(\tau)y(t-\tau) \Longleftrightarrow Ta_kb_k \,.
   \end{displaymath}
   %
   In other words, convolution in one domain is multiplication in the other. 

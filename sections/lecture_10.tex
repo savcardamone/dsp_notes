@@ -1,0 +1,386 @@
+\section{Lecture 10: The Discrete Fourier Transform}
+
+So far, we have identified that the Fourier Series can be used for
+periodic, continuous-time systems. The Fourier Tranform is to be
+used for aperiodic, continuous-time systems, while the Discrete
+Time Fourier Transform is for aperiodic, discrete-time systems.
+The final permutation that we're required to consider turns out
+to be the most important for signal processing -- the
+\textbf{Discrete Fourier Transform}, or DFT.
+
+Recall that the Fourier Series takes a continuous, periodic
+signal and represents it as a sum of (complex) sines and cosines,
+%
+\begin{displaymath}
+  x(t) = \infsum{k} X[k]\ex{\im k\frac{2\pi}{T}t} \,,
+\end{displaymath}
+%
+where $\frac{2\pi}{T} = \omega_0$, the fundamental frequency of the
+signal, and $t$ is some continuous time variable taking a value
+$0 \leq t \leq T$. Our rationale for the infinite summation was that
+features such as discontinuities required infinitely many sinusoids
+to recreate the structure of the function. In discrete time, however,
+we can only have a finite number of discrete sinusoids by virtue of the
+$2\pi$-periodicity of the DTFT. Simple substitution of a discrete-time
+variable into the expression for the Fourier Series, i.e.
+%
+\begin{displaymath}
+  x[n] = \infsum{k} X[k]\ex{\im k\frac{2\pi}{N}n} \,,
+\end{displaymath}
+%
+doesn't make a great deal of sense since
+%
+\begin{displaymath}
+  \ex{\im k\frac{2\pi}{N}(n + N)} = \ex{\im k\frac{2\pi}{N}n}\ex{\im k2\pi}
+  = \ex{\im k \frac{2\pi}{N}n} \,,
+\end{displaymath}
+%
+i.e. there are only $N$ unique complex exponentials of period $N$. This
+makes sense from the perspective of linear algebra -- a mismatch in the
+number of output values and the number of basis functions (the complex
+exponentials in our case) leaves the system under- or over-determined,
+and there is no longer any unique solution.
+
+Define the DFT as
+%
+\begin{equation}
+  X[k] = \sum_{n=0}^{N-1}x[n]\ex{-\im k\frac{2\pi}{N}n},
+  \quad k = 0,1,\hdots, N-1 \,,
+\end{equation}
+%
+and its inverse, the IDFT,
+%
+\begin{equation}
+  x[n] = \sum_{k=0}^{N-1}X[k]\ex{\im k\frac{2\pi}{N}n},
+  \quad n = 0,1,\hdots, N-1 \,.
+\end{equation}
+%
+We can simplify this notation by introducing the notation
+$W_N=\ex{-\im\frac{2\pi}{N}}$, i.e. a point on the unit circle in the
+complex plane whose angle is given by $\frac{2\pi}{N}$. $W_N$ is referred
+to as an $n$\textsuperscript{th} root of unity, since $(W_N)^N = 1$.
+Taking $(W_N)^k$ increments its angle around the unit circle by $k$
+increments of $\frac{2\pi}{N}$. We can now rewrite the DFT,
+%
+\begin{equation}
+  X[k] = \sum_{n=0}^{N-1}x[n]W_N^{kn} \,,
+\end{equation}
+%
+and the IDFT as
+%
+\begin{equation}
+  x[n] = \frac{1}{N}\sum_{k=0}^{N-1}X[k]W_N^{-kn} \,.
+\end{equation}
+%
+From the theory of linear transformations, we see that the DFT can be
+written in terms of matrix algebra,
+%
+\begin{displaymath}
+  \vec{X}
+  =
+  \left[\begin{array}{cccc}
+      W_N^{0,0} & W_N^{0,1} & \hdots & W_N^{0,N-1} \\
+      W_N^{1,0} & W_N^{1,1} & \hdots & W_N^{1,N-1} \\
+      \vdots & \vdots & \ddots & \vdots \\
+      W_N^{N-1,0} & W_N^{N-1,1} & \hdots & W_N^{N-1,N-1}
+  \end{array}\right]
+  \left[\begin{array}{c}
+      x_1 \\ x_2 \\ \vdots \\ x_{N-1}
+  \end{array}\right]
+  = \matr{W}\vec{x} \,,
+\end{displaymath}
+%
+where $\matr{W}\in\mathbb{C}^{N\times N}$ -- $\vec{x}$ and $\vec{X}$ are,
+generally speaking, vectors in $\mathbb{C}^N$, although under certain conditions
+can be real-valued. Note that $\matr{W}$ is, by virtue of the orthogonality of
+the complex exponentials, unitary (the factor of $\frac{1}{\sqrt{N}}$ in the
+IDFT preserves this unitarity, which satisfies Parseval's theorem, i.e. that
+the energy in both time and frequency domains remains the same). Herein we'll omit the
+subscript on the DFT matrix $\matr{W}$ since its size is implied by the lengths of $\vec{x}$
+and $\vec{X}$.\\
+
+Consider a finite-length discrete-time signal,
+$\vec{x} = \left[\begin{array}{cccc}x[0] & x[1] & \hdots & x[N-1]\end{array}\right]^\top$.
+The DTFT of this signal is
+%
+\begin{displaymath}
+  X(\omega) = \infsum{n}x[n]\ex{-\im\omega n}, \quad \omega\in[-\pi,\pi] \,,
+\end{displaymath}
+%
+i.e. a continuous function of $\omega$ which is $2\pi$-periodic. Since $\vec{x}$ is
+only non-zero on the range $[0,N-1]$,
+%
+\begin{displaymath}
+  X(\omega) = \sum_{n=0}^{N-1}x[n]\ex{-\im\omega n} \,.
+\end{displaymath}
+%
+Looking at the form of the DFT, we see that the DFT is the DTFT evaluated at
+$\omega = \frac{2\pi k}{N}$,
+%
+\begin{displaymath}
+  X[k] = X(\frac{2\pi k}{N}), \quad k = 0, 1, \hdots N-1 \,.
+\end{displaymath}
+%
+In other words, the frequency response that we obtain via the DFT is the frequency
+response obtained by the DTFT, but sampled at the points $\frac{2\pi k}{N}$ on the
+$\omega$ axis. As $N\rightarrow\infty$, we recover the DTFT as the samples are separated
+by an infinitesimal in $\omega$.
+%
+\begin{exmp}
+  Consider the periodic discrete-time signal
+  %
+  \begin{displaymath}
+    x[n + N] = \left\{\begin{array}{ccl}
+      1 & & n = 0 \\
+      0 & & \mathrm{otherwise}
+    \end{array}\right. \,,
+  \end{displaymath}
+  i.e. the periodic delta function. From the DFT, we have
+  %
+  \begin{displaymath}
+    X[k] = \sum_{n=0}^{N-1}x[n] W^{nk} = W^0 = 1 \,,
+  \end{displaymath}
+  %
+  for all discrete frequencies $k$, as expected. Conversely, inverting this
+  function $X(k) = 1$,
+  %
+  \begin{displaymath}
+    x[n] = \frac{1}{N}\sum_{k=0}^{N-1}X[k] W^{nk}
+    = \frac{1}{sqrt{N}}\frac{1 - (W^k)^n}{1 - W^k} \,,
+  \end{displaymath}
+  %
+  as per the finite sum formula. The denominator in this expression
+  is some complex number, but the numerator takes two values depending
+  on the value of $K$: if $k=0$, then $W^0 = 1$ and the above expression
+  simplifies to $x[0] = 1$. If $k\neq 0$, then $(W^n)^k$ is simply $k$
+  full rotations around the unit circle in the complex plane, i.e.
+  $\ex{\frac{-2\pi\im N}{N}} = \ex{-2\pi\im} = 1$, and the above
+  expression simplifies to $x[k] = 0$. In other words, we've recovered
+  the delta function, and we've established the duality of the time-domain
+  signal and the DFT.
+\end{exmp}
+%
+The above example uses a key property of the Fourier matrix, referred to
+as the \textbf{orthogonality property}, which we'll invoke frequently
+throughout the remaining discussion:
+%
+\begin{equation}
+  \sum_{n=0}^{N-1}W_N^{mn} = \left\{\begin{array}{ccl}
+    N & & m\;\mathrm{mod}\;N = 0 \\
+    0 & & \mathrm{otherwise} 
+  \end{array}\right. \,.
+\end{equation}
+%
+\begin{exmp}
+  Consider the top-hat signal
+  %
+  \begin{displaymath}
+    x[n] =
+    \left\{\begin{array}{ccl}
+    1 & & 0 \leq n < 5 \\
+    0 & & \mathrm{otherwise}
+    \end{array}\right. \,.
+  \end{displaymath}
+  %
+  The DTFT of this signal is
+  %
+  \begin{displaymath}
+    X(\omega) = \infsum{n}x[n]\ex{-\im\omega n}
+    = \sum_{n=0}^4\ex{-\im\omega n}
+    = \frac{1 - \ex{-5\im\omega}}{1 - \ex{-\im\omega}} \,.
+  \end{displaymath}
+  %
+  Factoring out an exponential in both numerator and denominator,
+  %
+  \begin{displaymath}
+    X(\omega) = \frac{
+      \ex{-\frac{5\im\omega}{2}}\left(\ex{\frac{5\im\omega}{2}} - \ex{-\frac{5\im\omega}{2}}\right)
+    }{
+      \ex{-\frac{\im\omega}{2}}\left(\ex{\frac{\im\omega}{2}} - \ex{-\frac{\im\omega}{2}}\right)
+    } = \ex{-2\im\omega}\frac{
+      \sin\left(\frac{5\omega}{2}\right)
+    }{
+      \sin\left(\frac{\omega}{2}\right)
+    } \,.
+  \end{displaymath}
+  %
+  Now let's try to treat this as a length-10 discrete-time signal,
+  %
+  \begin{displaymath}
+    X[k] = \sum_{n=0}^9 x[n]W_{10}^{kn} = \sum_{n=0}^4 W_{10}^{kn}
+    = \frac{1 - W_{10}^{5k}}{1 - W_{10}}
+    = \frac{1 - \ex{-\im k \frac{2\pi}{10}5}}{1 - \ex{-\im k \frac{2\pi}{10}}} \,,
+  \end{displaymath}
+  %
+  and doing the same manipulation as before,
+  %
+  \begin{displaymath}
+    X[k] = \frac{
+      \ex{-\im k\frac{\pi}{2}}(\ex{\im k\frac{\pi}{2}} - \ex{\im k\frac{\pi}{2}}) 
+    }{
+      \ex{-\im k\frac{\pi}{10}}(\ex{\im k\frac{\pi}{10}} - \ex{\im k\frac{\pi}{10}}) 
+    } = \ex{-\im\frac{4k\pi}{10}} \frac{
+      \sin\left(\frac{\pi k}{2}\right)
+    }{
+      \sin\left(\frac{\pi k}{10}\right)
+    } \,.
+  \end{displaymath}
+  %
+  Recalling that the DFT is just the DTFT sampled at the points
+  $\omega = \frac{2\pi k}{N}$, we see that
+  %
+  \begin{displaymath}
+    X(\omega) = \ex{-2\im\omega}\frac{
+      \sin\left(\frac{5\omega}{2}\right)
+    }{
+      \sin\left(\frac{\omega}{2}\right)
+    } =
+    \ex{-\im\frac{4\pi k}{10}}\frac{
+      \sin\left(\frac{\pi k}{2}\right)
+    }{
+      \sin\left(\frac{\pi k}{10}\right)
+    } = X[k] \,,
+  \end{displaymath}
+  %
+  as required.
+\end{exmp}
+
+\subsection{Properties of the DFT}
+%
+\begin{enumerate}
+\item (\textbf{Linearity}) Given the signals $x_1[n]$ and $x_2[n]$, each
+  of period $N$,
+  %
+  \begin{displaymath}
+    ax_1[n] + bx_2[n] \Longleftrightarrow aX_1[k] + bX_2[k] \,. 
+  \end{displaymath}
+  %
+\item (\textbf{Symmetry}) If $x[n]$ is even, then $X[k]$ is real and even.
+  Conversely, if $x[n]$ is odd, then $X[k]$ is imaginary and odd.
+  %
+\item (\textbf{Time-Shifting}) For the time-shifted signal,
+  %
+  \begin{displaymath}
+    x[n-m] \Longleftrightarrow W_N^{km}X[k] \,.
+  \end{displaymath}
+  %
+  Note that shifting a periodic signal is a cyclic shift.
+  %
+\item (\textbf{Convolution}) For the signals $x[n] \Longleftrightarrow X[k]$
+  and $y[n] \Longleftrightarrow Y[k]$, which are both $N$-periodic,
+  %
+  \begin{displaymath}
+    x[n]y[n] \Longleftrightarrow X[k]\circledast Y[k] \,,
+  \end{displaymath}
+  %
+  where $\circledast$ denotes the cyclic convolution. 
+\end{enumerate}
+
+\subsection{Discrete-Time Convolution}
+%
+The duality between cyclic convolution and multiplication in the time/ frequency
+domains poses something of a problem for our treatment of LTI systems, where
+the output of an LTI system is given by the ``regular'' convolution of an
+input signal and the system's impulse response. Let's explicitly consider what
+is happening with the cyclic convolution with some examples. Let $x[n]$ and $h[n]$
+be length-5 periodic signals. Then,
+%
+\begin{displaymath}
+  x[n]\circledast h[n] =
+  \left[\begin{array}{c}
+      y_0 \\ y_1 \\ y_2 \\ y_3 \\ y_4
+    \end{array}\right] =
+  \left[\begin{array}{c}
+      h_0x_0 + h_4x_1 + h_3x_2 + h_2x_3 + h_1x_4 \\
+      h_1x_0 + h_0x_1 + h_4x_2 + h_3x_3 + h_2x_4 \\
+      h_2x_0 + h_1x_1 + h_0x_2 + h_4x_3 + h_3x_4 \\
+      h_3x_0 + h_2x_1 + h_1x_2 + h_0x_3 + h_4x_4 \\
+      h_4x_0 + h_3x_1 + h_2x_2 + h_1x_3 + h_0x_4
+    \end{array}\right]
+  = \left[\begin{array}{ccccc}
+      \red{h_0} & \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} \\
+      \blu{h_1} & \red{h_0} & \orn{h_4} & \yel{h_3} & \grn{h_2} \\
+      \grn{h_2} & \blu{h_1} & \red{h_0} & \orn{h_4} & \yel{h_3} \\
+      \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0} & \orn{h_4} \\
+      \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0}
+    \end{array}\right] \left[\begin{array}{c}
+      x_0 \\ x_1 \\ x_2 \\ x_3 \\ x_4
+    \end{array}\right] \,,
+\end{displaymath}
+%
+where we have noticed that the summation of elements of $x[n]$ and $h[n]$
+resembles a linear transformation of the $x[n]$ by $h[n]$ when placed into
+the matrix in the final expression. This matrix has a particular form which
+is emphasised by our choice of colour -- it is referred to as a \textbf{circulant}
+matrix.\\
+%
+Now, consider what is happening with the ``regular'' linear convolution when we
+try to represent it as a linear transformation of the $x[n]$,
+%
+\begin{displaymath}
+  x[n] * h[n] =
+  \left[\begin{array}{c}
+      y_0 \\ y_1 \\ y_2 \\ y_3 \\ y_4 \\ y_5 \\ y_6 \\ y_7 \\ y_8
+    \end{array}\right] =
+  \left[\begin{array}{l}
+      h_0x_0 \\
+      h_1x_0 + h_0x_1 \\
+      h_2x_0 + h_1x_1 + h_0x_2 \\
+      h_3x_0 + h_2x_1 + h_1x_2 + h_0x_3 \\
+      h_4x_0 + h_3x_1 + h_2x_2 + h_1x_3 + h_0x_4 \\
+      h_4x_1 + h_3x_2 + h_2x_3 + h_1x_4 \\
+      h_4x_2 + h_3x_3 + h_2x_4 \\
+      h_4x_3 + h_3x_4 \\
+      h_4x_4
+    \end{array}\right]
+  = \left[\begin{array}{ccccc}
+      \red{h_0} & 0 & 0 & 0 & 0 \\
+      \blu{h_1} & \red{h_0} & 0 & 0 & 0 \\
+      \grn{h_2} & \blu{h_1} & \red{h_0} & 0 & 0 \\
+      \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0} & 0 \\
+      \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0} \\
+      0 & \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} \\
+      0 & 0 & \orn{h_4} & \yel{h_3} & \grn{h_2} \\
+      0 & 0 & 0 & \orn{h_4} & \yel{h_3} \\
+      0 & 0 & 0 & 0 &\orn{h_4}
+    \end{array}\right] \left[\begin{array}{c}
+      x_0 \\ x_1 \\ x_2 \\ x_3 \\ x_4
+    \end{array}\right] \,,
+\end{displaymath}
+%
+where we have to accommodate the prologue and epilogue phases of
+the convolution, i.e. when $h[n]$ doesn't fully overlap with $x[n]$
+during the ``flip and slide''.\\
+%
+Our solution to recovering the linear convolution from a cyclic
+convolution is to use \textbf{zero-padding}. Generally speaking, consider
+$h[n]$ is length $N$ and $x[m]$ is length $M$. Then, by padding $h[n]$
+with $M-1$ zeroes at the end of the signal, and by padding $x[m]$ with
+$N-1$ zeroes at the end of the signal, so that both are length $N+M-1$,
+and referring to these padded signals as $h_p[n]$ and $x_p[m]$, respectively,
+%
+\begin{displaymath}
+  x_p[m] * h_p[n] =
+  \left[\begin{array}{c}
+      y_0 \\ y_1 \\ y_2 \\ y_3 \\ y_4 \\ y_5 \\ y_6 \\ y_7 \\ y_8
+    \end{array}\right]
+  = \left[\begin{array}{ccccccccc}
+      \red{h_0} & 0 & 0 & 0 & 0 & \blu{h_4} & \grn{h_3} & \yel{h_2} & \orn{h_1} \\
+      \blu{h_1} & \red{h_0} & 0 & 0 & 0 & 0 & \blu{h_4} & \grn{h_3} & \yel{h_2} \\
+      \grn{h_2} & \blu{h_1} & \red{h_0} & 0 & 0 & 0 & 0 & \blu{h_4} & \grn{h_3} \\
+      \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0} & 0 & 0 & 0 & 0 & \blu{h_4} \\
+      \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0} & 0 & 0 & 0 & 0 \\
+      0 & \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0} & 0 & 0 & 0 \\
+      0 & 0 & \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0} & 0 & 0 \\
+      0 & 0 & 0 & \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0} & 0 \\
+      0 & 0 & 0 & 0 & \orn{h_4} & \yel{h_3} & \grn{h_2} & \blu{h_1} & \red{h_0}
+    \end{array}\right] \left[\begin{array}{c}
+      x_0 \\ x_1 \\ x_2 \\ x_3 \\ x_4 \\ 0 \\ 0 \\ 0 \\ 0
+    \end{array}\right] \,,
+\end{displaymath}
+%
+which recovers the result of the linear convolution. Our conclusion is then to do linear
+convolution with the DFT, we must first zero-pad our two signals, perform
+DFTs of both, multiply these two signals in the frequency domain and finally
+perform an IDFT to recover the linear convolution in the time domain.
+

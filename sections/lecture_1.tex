@@ -45,7 +45,8 @@ which is clearly wrong. Exchanging the order of operations,
 \end{displaymath}
 %
 as required. Consequently, transformations should be applied in the order
-\textbf{shift, flip, scale}. This ordering is summarised in Figure
+\textbf{shift, flip, scale} (although the order of flip and scale is irrelevant
+since multiplication is commutative). This ordering is summarised in Figure
 \ref{fig::lecture_1_transformation_order}.
 %
 \begin{figure}[!htb]
@@ -165,16 +166,16 @@ of the delta function, which allows us to parse out a part of a signal that we w
 \subsection{Complex Number Review}
 %
 Foregoing the basic introduction to complex numbers, we'll just recap by taking a specific
-example whose form it will prove useful to know about in the future. Consider $x[t] = C\ex{at}$,
+example whose form it will prove useful to know about in the future. Consider $x(t) = C\ex{at}$,
 where $C,a\in \mathbb{C}^2$. Writing $C = |C|\ex{\im\theta}$ in
 polar form and $a = r + \im\omega_0$ in rectilinear form, we can form the expression
 %
 \begin{align*}
-  x[t] &= C\ex{at} = |C|\ex{\im\theta}\ex{rt}\ex{\im\omega_0 t} = |C|\ex{rt}\ex{\im(\theta + \omega_0 t)} \\
+  x(t) &= C\ex{at} = |C|\ex{\im\theta}\ex{rt}\ex{\im\omega_0 t} = |C|\ex{rt}\ex{\im(\theta + \omega_0 t)} \\
   &= |C|\ex{rt}\left[ \cos(\omega_0 t + \theta) + \im\sin(\omega_0 t + \theta) \right]
 \end{align*}
 %
-Taking the real part of $x[t]$, we see that the function is the cosine whose amplitude is bounded by the
+Taking the real part of $x(t)$, we see that the function is the cosine whose amplitude is bounded by the
 exponential $|C|\ex{rt}$, which is either increasing or decreasing depending on whether $r$ is positive
 or negative, respectively. The imaginary part simply exchanges the cosine for a sine.
 We'll encounter many signals of this form, and referring back to its behaviour

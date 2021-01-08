@@ -1,0 +1,83 @@
+\section{Decibels}
+%
+When dealing with the power content of a signal, we are typically presented with enormous
+dynamic ranges spanning many orders of magnitude; picowatts and below all the way to
+gigawatts and above. Relative powers spanning this range are cumbersome to work with.
+For instance, if I have a signal whose energy is 6 millwatts and amplify it to 5 megawatts,
+the amplification is given by their ratio, the gain,
+%
+\begin{displaymath}
+  \mathrm{Gain}\; = \frac{P_{out}}{P_{in}} = \frac{5\times 10^6}{6\times 10^{-3}}
+  \approx 8.3\times 10^8 \,.
+\end{displaymath}
+%
+The simplest way to overcome this is to invoke a logarithmic scale for relative
+powers, resulting in a value on the Bel scale,
+%
+\begin{displaymath}
+  \mathrm{Gain}\;\mathrm{(Bel)}\; = \log_{10}\left(\frac{P_{out}}{P_{in}}\right)
+  = \log_{10}\left(\frac{5\times 10^6}{6\times 10^{-3}}\right) \approx 8.9\; \mathrm{Bel} \,.
+\end{displaymath}
+%
+A quirk of history means that we typically work with decibels rather than Bels,
+%
+\begin{displaymath}
+  \mathrm{Gain}\;\mathrm{(dB)} = 10\log_{10}\left(\frac{P_{out}}{P_{in}}\right)\; \mathrm{dB} \,,
+\end{displaymath}
+%
+the reason being that the smallest detectable difference in volume by a human is
+a decibel, which has led to its use in other fields by convention. There is another
+scale which uses the natural logarithm, the Neper Scale, but this has never gained
+traction. Inverting our expression for the gain to recover the power of the output signal,
+%
+\begin{displaymath}
+  \log_{10}\left(\frac{P_{out}}{P_{in}}\right) = \frac{\mathrm{Gain}}{10}
+  \quad\rightarrow\quad
+  P_{out} = 10^{\frac{Gain}{10}}P_{in} \,.
+\end{displaymath}
+%
+In signal processing, another common unit is the ``decibel milliwatt'', or dBm, where
+the reference input power is equal to a milliwatt,
+%
+\begin{displaymath}
+  \mathrm{Gain}\;\mathrm{(dBm)} = 10\log_{10}\left(\frac{P_{out}}{1\mathrm{mW}}\right)\; \mathrm{dBm} \,.
+\end{displaymath}
+%
+A second useful feature of these logarithmic ratios is the fact that multiplication
+of gains in the dimensionless scale we first introduced becomes addition.
+%
+\begin{exmp}
+  Consider an initial signal with power $7$dBm, which is amplified by an amplifier with
+  a gain of 2. In dBm,
+  %
+  \begin{displaymath}
+    10\log_{10}\left(\frac{2\mathrm{mW}}{1\mathrm{mW}}\right) \approx 3\mathrm{dBm} \,.
+  \end{displaymath}
+  %
+  The power of the resultant signal is simply given by the sum of the initial signal power
+  and the gain of the amplifier, $7\mathrm{dBm}\; + 3\mathrm{dBm}\; = 10\mathrm{dBm}$.
+\end{exmp}
+%
+It is worth considering the form of the gain in units of decibels -- it is plotted
+in Figure \ref{fig::appendix_1_decibels}. Note that when the input and output signals
+have the same power, the gain is equal to $1$dB. In keeping with the additive property
+of decibels, any decrease in gain is given by a negative number.
+%
+\begin{figure}[!htb]
+  \begin{tikzpicture}
+    \begin{axis}[
+        width=0.9\textwidth,
+        axis lines=middle,
+        xmin=0, xmax=10, ymin=-10, ymax=10,
+        xlabel=$\frac{P_{out}}{P_{in}}$,
+        ylabel=$\mathrm{Gain}\;\mathrm{(dB)}$
+      ]
+      \addplot[samples=100, domain=0:15, blue, ultra thick] {10*log10(x)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{The ratio of output to input signals plotted against the associated
+    gain in dB. Observe that a ratio of 2, i.e. the output signal has a power twice
+    that of the input signal, the gain is 3dB.}
+  \label{fig::appendix_1_decibels}
+\end{figure}
+

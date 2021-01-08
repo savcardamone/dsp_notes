@@ -136,7 +136,7 @@ as per the Fubini-Tonelli theorem.
 \end{exmp}
 %
 We have seen for the continuous-time Fourier transform that
-$x(t) \circledast h(t) \Longleftrightarrow X(\omega)H(\omega)$. This still holds for the DTFT
+$x(t) * h(t) \Longleftrightarrow X(\omega)H(\omega)$. This still holds for the DTFT
 as shown here:
 %
 \begin{align*}
@@ -209,7 +209,9 @@ In other words, this phase shift in the frequency domain becomes a delay in
 the time domain. All frequencies are shifted by the same amount, and
 so there's no distortion -- we have a pure delay of the input. But why can't we
 have a zero delay? Recall that our ideal low pass filter in the time domain is
-a $\sinc$, which is not causable, not absolutely summable (and consequently
+a $\sinc$, which is not causal, not absolutely summable (and consequently
 not stable) and infinitely long. We'll find later that the introduction of a
-delay (i.e. a non-zero phase) remedies these problems. If we want to filter
+delay (i.e. a non-zero phase) remedies these problems. For instance, we can
+``kind of'' make the filter causal by shifting it in the time domain by some
+constant $T$, such that the output at $t < 0$  is negligible. If we want to filter
 a signal well, we have to tolerate some delay.

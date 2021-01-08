@@ -22,7 +22,8 @@ the Laplace transform,
 where $s\in\mathbb{C}$. While the Fourier transform is a complex
 function of a real variable $\omega$, the Laplace transform is a
 complex function of a complex variable, $s$. The discrete-time
-version of the Laplace transform is the \textbf{Z-transform},
+version of the Laplace transform is the \textbf{Z-transform}, is
+the Laurent series
 %
 \begin{equation}
   X(z) = \infsum{n}x[n]z^{-n} \,,
@@ -229,9 +230,86 @@ be ascertained.
   \end{displaymath}
   %
   In this form, we can compute the transfer function through summing
-  the transfer functions for right-sided exponentials,
+  the transfer functions for right-sided exponentials, which we've previously
+  evaluated
   %
   \begin{displaymath}
-
+    X(z) = \frac{1}{2}\left[\frac{z}{z - 2\ex{3\im}} + \frac{z}{z - 2\ex{-3\im}}\right]
+    = \frac{1}{2}\left[\frac{z(z-2\ex{-3\im}) + z(z - 2\ex{3\im})}{(z-2\ex{-3\im})(z-2\ex{3\im})}\right] \,.
   \end{displaymath}
+  %
+  From this, we can establish the existence of two poles at $2\ex{\pm3\im}$.
+  Doing some more manipulations,
+  %
+  \begin{align*}
+    X(z) &= \frac{
+      2z^2 - 2z\left(\ex{-3\im} + \ex{3\im}\right)
+    }{
+      2\left(z^2 - 2z\left(\ex{-3\im} + \ex{3\im}\right)\right) + 4
+    }
+    = \frac{2z^2 - 4\cos(3)}{2z^2 - 8z\cos(3) + 8}
+    = \frac{z^2 - 2z\cos(3)}{z^2 - 4z\cos(3) + 4} \\
+    &= \frac{z(z - 2\cos(3))}{z^2 - 4z\cos(3) + 4} \,,
+  \end{align*}
+  %
+  and we have zeroes at $|z| = 0, 2\cos(3)$. We saw that the ROC for a right
+  sided exponential was when $|z| > |a|$, which in our case equates to
+  $|a| = \left|2\ex{\pm 3\im}\right|$ (since this is where the poles are),
+  and consequently we have $|z| > 2$.
 \end{exmp}
+%
+\begin{exmp}
+  Consider the signal $x[n] = r^n\sin(\omega_0 n)u[n]$. Our first thought should be
+  to turn any sinusoids into exponentials,
+  %
+  \begin{displaymath}
+    x[n] = \frac{r^n}{2}\left(\ex{\im \omega_0n} + \ex{-\im \omega_0n}\right) = \frac{1}{2}\left[
+      \left(r\ex{\im\omega_0}\right)^n + \left(r\ex{-\im\omega_0}\right)^n 
+    \right] u[n] \,.
+  \end{displaymath}
+  %
+  In this form, we can compute the transfer function through summing
+  the transfer functions for right-sided exponentials, which we've previously
+  evaluated
+  %
+  \begin{displaymath}
+    X(z) = \frac{1}{2}\left[\frac{z}{z - r\ex{\im\omega_0}} - \frac{z}{z - r\ex{-\im\omega_0}}\right]
+    = \frac{1}{2}\left[\frac{z(z-r\ex{-\im\omega_0}) - z(z - r\ex{\im\omega_0})}{(z-r\ex{-\im\omega_0})(z-r\ex{\im\omega_0})}\right] \,.
+  \end{displaymath}
+  %
+  From this, we can establish the existence of two poles at $r\ex{\pm\im\omega_0}$.
+  Doing some more manipulations,
+  %
+  \begin{align*}
+    X(z) &= \frac{
+      z^2 + zr(\ex{\im\omega_0} - \ex{-\im\omega_0}) - z^2)
+    }{
+      2(z^2 - zr(\ex{\im\omega_0} + \ex{-\im\omega_0} + r^2)
+    }
+    = \frac{zr\sin(\omega_0)}{z^2 - 2zr\cos(\omega_0) + r^2} \\
+    &=  \frac{z^{-1}r\sin(\omega_0)}{1 - 2z^{-1}r\cos(\omega_0) + z^{-2}r^2}\,,
+  \end{align*}
+  %
+  and we have zeroes at $|z|$. We saw that the ROC for a right
+  sided exponential was when $|z| > |a|$, which in our case equates to
+  $|a| = \left|r\ex{\pm \im\omega_0}\right|$ (since this is where the poles are),
+  and consequently we have $|z| > |r|$.
+\end{exmp}
+
+\subsection{Rules About the ROC}
+%
+\begin{enumerate}
+\item The ROC is a rang or disk centred at the origin.
+\item The ROC contains no poles.
+\item If $x[n]$ is of finite length, then the ROC is the complex
+  plane with the exception of $0,\infty$.
+\item If $x[n]$ is left-sided, then the ROC is contained within a cicle.
+  If $x[n]$ is right-sided, then the ROC is outside of a circle. If $x[n]$
+  is two-sided then the ROC is the annular region bounded by poles.
+\item The ROC for a transfer function $H(z)$ tells us whether the system
+  is stable and causal. If the system is stable, the ROC includes the unit
+  circle, $|z| = 1$. If the system is causal, the ROC must contain infinity and
+  the impulse response will be right-sided. The best case scenario is all poles
+  contained within the unit circle and the ROC extending to infinity, and the
+  system is consequently stable and causal.
+\end{enumerate}

@@ -24,6 +24,8 @@
 \usepackage[toc,page]{appendix}
 \usepackage[mathscr]{euscript}
 
+\usetikzlibrary{positioning,circuits.ee.IEC}
+
 %%%
 %%% Generic LaTeX settings and commands
 %%%
@@ -49,6 +51,8 @@
 \newcommand{\yel}[1]{\color{yellow}{#1}}
 \newcommand{\grn}[1]{\color{green}{#1}}
 \newcommand{\blu}[1]{\color{blue}{#1}}
+\newcommand{\st}{^\mathrm{st}\mkern1mu}
+\renewcommand{\th}{^\mathrm{th}\mkern1mu}
 
 % Get rid of stupid revtex numbering
 \def\thesection{\arabic{section}}
@@ -90,6 +94,8 @@
 \input{sections/lecture_9.tex}
 \input{sections/lecture_10.tex}
 \input{sections/lecture_11.tex}
+\input{sections/lecture_12.tex}
+\input{sections/lecture_13.tex}
 
 %%%
 %%% Appendices

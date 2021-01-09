@@ -1,1 +1,342 @@
 \section{Lecture 11: The Radix-2 Fast Fourier Transform}
+
+Consider the DFT,
+%
+\begin{displaymath}
+  X[k] = \sum_{n=0}^{N-1}x[n]\ex{-\im k\frac{2\pi}{N}n},\quad
+  n,k = 0, 1, \hdots N-1 \,,
+\end{displaymath}
+%
+which in abbreviated form becomes
+%
+\begin{displaymath}
+  X[k] = \sum_{n=0}^{N-1}x[n]W_N^{kn} \,,
+\end{displaymath}
+%
+with $W_N = \ex{-\im\frac{2\pi}{N}}$, and $W_N^m$ for $m=1,2,\hdots,N$
+are the $n$\textsuperscript{th} roots of unity, which are evenly spaced
+around the unit circle on the complex plane. Analysing the computational
+complexity of this, to compute the $\{X[k]\}$, we need to compute $N^2$
+complex multiplications and $N(N-1)$ complex additions (assuming the
+$W_N^m$ are pre-calculated). Quadratic scaling in the problem complexity
+is not tractable for large $N$, and consequently much work has been
+conducted to find a more efficient way to compute the DFT.\\
+
+The \textbf{Fast Fourier Transform} (FFT) is an algorithm which reduces
+the number of operations to $\mathcal{O}(N\log N)$. The main tool we'll
+use to achieve this is the decomposition of a large DFT into a series of
+smaller DFTs. Furthermore, there are some simplifications we can apply
+to the $W_N^{km}$ to simplify the calculation.
+
+\subsection{Decimation in Time}
+%
+Consider $N$ as an even number. We can break the expression for the DFT
+into separate sums over odd- and even-valued indices,
+%
+\begin{displaymath}
+  X[k] = \sum_{n=0}^{N-1}x[n]W_N^{nk}
+  = \sum_{n \mathrm{Even}}x[n] W_N^{nk}
+  + \sum_{n \mathrm{Odd}}x[n] W_N^{nk} \,.
+\end{displaymath}
+%
+Introducing a new index, $r$, such that $n=2r$,
+%
+\begin{align*}
+  X[k] &= \sum_{r=0}^{N/2-1} x[2r] W_N^{2rk}
+  + \sum_{r=0}^{N/2-1} x[2r+1] W_N^{(2r+1)k} \\
+  &= \sum_{r=0}^{N/2-1}x[2r]\left(W_N^2\right)^{rk}
+  + W_N^k\sum_{r=0}^{N/2-1}x[2r+1]\left(W_N^2\right)^{rk} \,,
+\end{align*}
+%
+where each sum looks suspiciously like a DFT of length $N/2$. Indeed,
+it transpires that each of these sums is precisely a length $N/2$ DFT,
+since $W_N^2$ are the $N/2$ roots of unity. For example, consider
+$W_4 = \{ \ex{-\im\frac{2\pi}{4}}, \ex{-\im\frac{4\pi}{4}}, \ex{-\im\frac{6\pi}{4}}, \ex{-\im\frac{8\pi}{4}} \}$,
+the fourth roots of unity. Then,
+$W_4^2 = \{ \ex{-\im\frac{4\pi}{4}}, \ex{-\im\frac{8\pi}{4}} \}$, the
+second roots of unity, i.e. $W_2$. Consequently,
+%
+\begin{displaymath}
+  X[k] = 
+  \sum_{r=0}^{N/2-1}x[2r] W_{N/2}^{rk}
+  + W_N^k\sum_{r=0}^{N/2-1}x[2r+1] W_{N/2}^{rk}
+  = X_e[k] + W_N^k X_o[k] \,,
+\end{displaymath}
+%
+where $X_e[k]$ is the DFT of the even-indexed elements of $x[n]$,
+and $X_o[k]$ is the DFT of the odd-indexed elements of $x[n]$. The
+computational process behind computing the $X[k]$ using this partition
+into even and odd DFTs is shown in Figure \ref{fig::lecture_11_dft_one}.
+%
+\begin{figure}[!htb]
+  \input{images/lecture_11_dft_one.tikz}
+  \caption{DFT for a length-8 signal. DFTs of length $N/2$ are taken for the
+    even and odd-indexed elements of $x[n]$ and recombined to compute the full
+    DFT of the original signal.
+  }
+  \label{fig::lecture_11_dft_one}
+\end{figure}
+%
+We know that the number of complex multiplications in a DFT scales like $N^2$.
+Splitting our calculation into two DFTs of length $N/2$ then turns the
+complexity into $N^2 / 2$, i.e. we've halved the computational effort associated
+with the complex multiplications. Note that we also have to multiply by the
+$\{W_N\}$ to recover the $X[k]$, but this operation is linear in $N$ and so
+doesn't affect the complexity. It should not have escaped the reader's attention
+that we can repeat this trick again on the DFTs for $X_e[n]$ and $X_o[n]$.
+We'll require the even and odd parts of $X_e[n]$ ($X_{ee}[n]$ and $X_{eo}[n]$,
+respectively) and $X_o[n]$ ($X_{oe}[n]$ and $X_{oo}[n]$, respectively).
+This scheme is depicted in Figure \ref{fig::lecture_11_dft_two}.
+%
+\begin{figure}[!htb]
+  \input{images/lecture_11_dft_two.tikz}
+  \caption{DFT for a length-8 signal using length-2 DFTs. DFTs of length $N/4$
+    are taken for the even-even, even-odd, odd-even and odd-even indexed elements
+    of $x[n]$ and recombined to compute the full DFT of the original signal.
+  }
+  \label{fig::lecture_11_dft_two}
+\end{figure}
+%
+The computational complexity of this DFT is $N^2 / 4$ in the number of complex
+multiplications, and so we've halved the computational effort again. In fact,
+our efficiency is improved further when considering the form of a length-2 DFT:
+%
+\begin{displaymath}
+  X[k] = \sum_{n=0}^1 x[n]W_2^{nk} = \sum_{n=0}^1 x[n](-1)^{nk} \,,
+\end{displaymath}
+%
+since the second roots of unity are simply $1,-1$, and so
+%
+\begin{displaymath}
+  X[0] = x[0] + x[1],\quad X[1] = x[0] - x[1] \,,
+\end{displaymath}
+%
+which contains no complex multiplications whatsoever! The scheme becomes
+like that depicted in Figure \ref{fig::lecture_11_dft_three}. The operation
+of combining two values to yield two different values (the cross-shaped patterns
+in the DFT figures) are referred to as \textbf{butterflies}.  
+%
+\begin{figure}[!htb]
+  \input{images/lecture_11_dft_three.tikz}
+  \caption{DFT for a length-8 signal using length-2 DFTs. DFTs of length $N/4$
+    are taken for the even-even, even-odd, odd-even and odd-even indexed elements
+    of $x[n]$ and recombined to compute the full DFT of the original signal.
+  }
+  \label{fig::lecture_11_dft_three}
+\end{figure}
+%
+Our computational complexity can now be made more general. If $N$ is a power of 2,
+we can recursively break the DFT into $\log_2(N)$ stages. At each stage, $N$ complex
+multiplies are required for the multiplication by a $W_N^k$, meaning the scaling is
+$N\log_2(N)$, as required for the FFT. This results in an enormous saving for large
+$N$; consider $N=2^{10}$ -- quadratic scaling would require in excess of a million
+complex multiplications, while the FFT requires roughly ten thousand, yielding a
+speedup of $100\times$.\\
+
+A further factor of two speedup can be obtained by noticing that the $W_N$
+coefficients appearing in a butterfly are separated by a power of $N/2$. So
+if one of the coefficients in the butterfly is $W_N^r$, then the corresponding
+coefficient on the other arm of the butterfly will be $W_N^{r + N/2}$.
+However,
+%
+\begin{displaymath}
+  W_N^{r + \frac{N}{2}} = W_N^r W_N^{\frac{N}{2}} = - W_N^r \,,
+\end{displaymath}
+%
+and only a single coefficient is actually used in each butterfly, scaled by
+$\pm 1$. An efficiency can be realised by first multiplying the bottom input arm
+of the butterfly by $W_N^r$, meaning the coefficient on the upper diagonal of
+the butterfly is $1$ and that on the lower diagonal is $-1$. As such, $N$
+complex multiplies at each stage of the FFT can be realised by $N/2$ complex
+multiplies.\\
+
+Since the $p\th$ and $q\th$ values in the $(m-1)\st$ stage are used to get the
+$p\th$ and $q\th$ values in the $m\th$ stage, the computation can be done
+in-place, i.e. so long as the input signal can be overwritten, the FFT can
+be done without need for extra storage. The ordering of the input signal's
+elements to compute the first stage's butterflies seems somewhat complex,
+and it's not clear how one might generalise the ordering for a given $N$.
+In the examples above for the length-8 FFT, for instance, the ordering is
+$0,4,2,6,1,5,3,7$. However, if we write out the order of these indices
+in binary and reverse them, it transpires that we recover the standard
+progression $0,1,2,\hdots$,
+%
+\begin{align*}
+  &000 \rightarrow 000 = 0, 001 \rightarrow 100 = 4, 010 \rightarrow 010 = 2,
+  011 \rightarrow 110 = 6 \\
+  &100 \rightarrow 001 = 1, 101 \rightarrow 101 = 5, 110 \rightarrow 011 = 3,
+  111 \rightarrow 111 = 7 \,.
+\end{align*}
+%
+So while the access pattern of these elements is non-trivial, the indices
+to be extracted from the original signal can be obtained through a
+\textbf{bit-reversal} algorithm.
+
+\subsection{The Linear Algebraic View of the FFT}
+
+Let's consider once again the length-8 DFT,
+%
+\begin{displaymath}
+  \left[\begin{array}{c}
+      X_0 \\ X_1 \\ X_2 \\ X_3 \\ X_4 \\ X_5 \\ X_6 \\ X_7
+    \end{array}\right] =
+  \left[\begin{array}{cccccccc}
+      W_8^0 & W_8^0 & W_8^0 & W_8^0 & W_8^0 & W_8^0 & W_8^0 & W_8^0 \\
+      W_8^0 & W_8^1 & W_8^2 & W_8^3 & W_8^4 & W_8^5 & W_8^6 & W_8^7 \\
+      W_8^0 & W_8^2 & W_8^4 & W_8^6 & W_8^8 & W_8^2 & W_8^4 & W_8^6 \\
+      W_8^0 & W_8^3 & W_8^6 & W_8^1 & W_8^4 & W_8^7 & W_8^2 & W_8^5 \\
+      W_8^0 & W_8^4 & W_8^8 & W_8^4 & W_8^8 & W_8^4 & W_8^8 & W_8^4 \\
+      W_8^0 & W_8^5 & W_8^2 & W_8^7 & W_8^4 & W_8^1 & W_8^6 & W_8^3 \\
+      W_8^0 & W_8^6 & W_8^4 & W_8^2 & W_8^8 & W_8^6 & W_8^4 & W_8^2 \\
+      W_8^0 & W_8^7 & W_8^6 & W_8^5 & W_8^4 & W_8^3 & W_8^2 & W_8^1      
+    \end{array}\right]
+  \left[\begin{array}{c}
+      x_0 \\ x_1 \\ x_2 \\ x_3 \\ x_4 \\ x_5 \\ x_6 \\ x_7
+    \end{array}\right] \,.
+\end{displaymath}
+%
+The eighth roots of unity, however, can be simplified by noting that
+$W_8^2 = -\im, W_8^4 = -1, W_8^6 = \im, W_8^8 = 1$. Furthermore, we
+established in the previous section that $W_N^{r+\frac{N}{2}} = -W_N^r$.
+Consequently, our DFT matrix exhibits some patterns,
+%
+\begin{displaymath}
+  \left[\begin{array}{c}
+      X_0 \\ X_1 \\ X_2 \\ X_3 \\ X_4 \\ X_5 \\ X_6 \\ X_7
+    \end{array}\right] =
+  \left[\begin{array}{cccccccc}
+      1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+      1 & W_8^1 & -\im & W_8^3 & -1 & -W_8^1 & \im & -W_8^3 \\
+      1 & -\im & -1 & \im & 1 & -\im & -1 & \im \\
+      1 & W_8^3 & \im & W_8^1 & -1 & -W_8^3 & -\im & -W_8^1 \\
+      1 & -1 & 1 & -1 & 1 & -1 & 1 & -1 \\
+      1 & -W_8^1 & -\im & -W_8^3 & -1 & W_8^1 & \im & W_8^3 \\
+      1 & \im & -1 & -\im & 1 & \im & -1 & -\im \\
+      1 & -W_8^3 & \im & -W_8^1 & -1 & W_8^3 & -\im & W_8^1      
+    \end{array}\right]
+  \left[\begin{array}{c}
+      x_0 \\ x_1 \\ x_2 \\ x_3 \\ x_4 \\ x_5 \\ x_6 \\ x_7
+    \end{array}\right] \,.
+\end{displaymath}
+%
+For the even-indexed columns, the upper 4 elements are equal to the
+lower 4 elements. For odd-indexed columns, the upper 4 elements are
+the negation of the lower 4 elements. We can eliminate this redundancy
+by writing the even columns as follows:
+%
+\begin{displaymath}
+  \mathrm{Even}(\matr{W}) =
+  \left[\begin{array}{c}\matr{I}_4 \\ \matr{I}_4\end{array}\right]
+  \left[\begin{array}{cccc}
+      1 & 1 & 1 & 1 \\
+      1 & -\im & -1 & \im \\
+      1 & -1 & 1 & -1 \\
+      1 & \im & -1 & -\im
+    \end{array}\right] \,.
+\end{displaymath}
+%
+But this sub-matrix of $\matr{W}$ is just the DFT matrix for a length-4 DFT.
+We can similarly write the odd columns of $\matr{W}$ as
+\begin{displaymath}
+  \mathrm{Odd}(\matr{W}) =
+  \left[\begin{array}{c}\matr{I}_4 \\ -\matr{I}_4\end{array}\right]
+  \left[\begin{array}{cccc}
+      1 & 1 & 1 & 1 \\
+      W_8^1 & W_8^3 & -W_8^1 & -W_8^3 \\
+      -\im & \im & -\im & \im \\
+      W_8^3 & W_8^1 & -W_8^3 & -W_8^1
+    \end{array}\right] =
+  \left[\begin{array}{c}\matr{I}_4 \\ -\matr{I}_4\end{array}\right]
+  \left[\begin{array}{cccc}
+      1 & 0 & 0 & 0 \\
+      0 & W_8^1 & 0 & 0 \\
+      0 & 0 & W_8^2 & 0 \\
+      0 & 0 & 0 & W_8^3
+    \end{array}\right]
+  \left[\begin{array}{cccc}
+      1 & 1 & 1 & 1 \\
+      1 & -\im & -1 & \im \\
+      1 & -1 & 1 & -1 \\
+      1 & \im & -1 & -\im
+    \end{array}\right] \,,  
+\end{displaymath}
+%
+where the length-4 DFT matrix now appears with some diagonal matrix
+pre-multiplying it, which we'll call $\matr{T}_4$, the
+\textbf{twiddle factors}. We can compose all of this together to obtain
+%
+\begin{displaymath}
+  \vec{X} = \left[\begin{array}{cc}
+      \matr{I}_4 & \matr{I}_4 \\
+      \matr{I}_4 & -\matr{I}_4
+    \end{array}\right]
+  \left[\begin{array}{cc}
+      \matr{I}_4 & \matr{0}_4 \\
+      \matr{0}_4 & \matr{T}_4
+    \end{array}\right] 
+  \left[\begin{array}{cc}
+      \matr{W}_4 & \matr{0}_4 \\
+      \matr{0}_4 & \matr{W}_4
+    \end{array}\right]
+  \left[\begin{array}{c}
+      \vec{x}_{\mathrm{even}} \\ \vec{x}_{\mathrm{odd}}
+    \end{array}\right] \,.
+\end{displaymath}
+%
+We now see what we've just derived for the FFT; the length-8 DFT can be
+broken down into the length-4 DFTs of the even and odd elements of the
+input signal, the odd DFT being modulated by some twiddle factors. Finally,
+the first matrix appearing in this expression represents the sums and
+differences of DFT values that were taken in the butterflies of the FFT.
+
+\subsection{Decimation in Frequency}
+%
+Consider the DFT
+%
+\begin{displaymath}
+  X[k] = \sum_{n=0}^{N-1}x[n]W_N^{nk} \,.
+\end{displaymath}
+%
+The even-indexed frequencies, $X[2r]$, where $r=0,1,\hdots,\frac{N-1}{2}$,
+are given by
+%
+\begin{align*}
+  X[2r] &= \sum_{n=0}^{N-1}x[n]W_N^{2nr}
+  = \sum_{n=0}^{N/2-1}x[n] W_N^{2nr} + \sum_{n=N/2}^{N-1}x[n]W_N^{2nr} \\
+  &= \sum_{n=0}^{N/2-1}x[n] W_{N/2}^{nr} + \sum_{n=0}^{N/2-1}x[n+N/2]W_N^{2(n+N/2)r} \,,  
+\end{align*}
+%
+where we have simply split the summation into two, and noticed that
+%
+\begin{displaymath}
+  W_N^{2nr} =\ex{-\im\frac{4\pi n r}{N}} = \ex{-\im\frac{2\pi n r}{N/2}} = W_{N/2}^{nr} \,,
+\end{displaymath}
+%
+and
+%
+\begin{displaymath}
+  W_N^{2(n+N/2)r} = \ex{-\im\frac{4\pi n r}{N}}\ex{-\im\frac{2\pi N r}{N}}
+  = \ex{-\im\frac{2\pi n r}{N/2}}\times 1 = W_{N/2}^{nr} \,.
+\end{displaymath}
+%
+As such,
+%
+\begin{displaymath}
+  X[2r] = \sum_{n=0}^{N/2-1}\left(x[n] + x[n+N/2]\right) W_{N/2}^{nr} \,.
+\end{displaymath}
+%
+This is nothing more than a length-$\frac{N}{2}$ DFT whose input signal is
+the original signal where elements separated by $\frac{N}{2}$ are summed. In
+the same way, we can obtain odd $X[n]$,
+%
+\begin{displaymath}
+  X[2r+1] = \sum_{n=0}^{N/2-1}\left(x[n] - x[n+N/2]\right) W_{N/2}^{nr} W_N^n \,,
+\end{displaymath}
+%
+where we notice the addition of the twiddle factor $W_N^n$ and the fact that
+the input signal is the difference between original elements in the input signal
+separated by $\frac{N}{2}$. This strategy of decimation in frequency allows us to
+obtain our $X[n]$ in a non-linear order as opposed to using the input signal $x[n]$
+in a non-linear order. Decimation in frequency is completely equivalent to decimation
+in time, but the implementer can select based on whether they have a preference for
+the ordering in the time or frequency domain.

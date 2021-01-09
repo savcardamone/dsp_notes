@@ -1,0 +1,120 @@
+\begin{tikzpicture}[thick, node distance=.5cm, circuit ee IEC]
+
+  \draw node (sig-0) at (0,0) {$x[0]$};
+  \draw node[below= of sig-0] (sig-1) {$x[4]$};
+  \draw node[below= of sig-1] (sig-2) {$x[2]$};
+  \draw node[below= of sig-2] (sig-3) {$x[6]$};
+  \draw node[below= of sig-3] (sig-4) {$x[1]$};
+  \draw node[below= of sig-4] (sig-5) {$x[5]$};
+  \draw node[below= of sig-5] (sig-6) {$x[3]$};
+  \draw node[below= of sig-6] (sig-7) {$x[7]$};
+  
+  \node [contact, label=right:{$X_{ee}[0]$}] (box-w-1-east) at ([shift=(right:3)] sig-0) {};
+  \node [contact, label=right:{$X_{ee}[1]$}] (box-w-2-east) at ([shift=(right:3)] sig-1) {};
+  \node [contact, label=right:{$X_{eo}[0]$}] (box-x-1-east) at ([shift=(right:3)] sig-2) {};
+  \node [contact, label=right:{$X_{eo}[1]$}] (box-x-2-east) at ([shift=(right:3)] sig-3) {};
+  \node [contact, label=right:{$X_{oe}[0]$}] (box-y-1-east) at ([shift=(right:3)] sig-4) {};
+  \node [contact, label=right:{$X_{oe}[1]$}] (box-y-2-east) at ([shift=(right:3)] sig-5) {};
+  \node [contact, label=right:{$X_{oo}[0]$}] (box-z-1-east) at ([shift=(right:3)] sig-6) {};
+  \node [contact, label=right:{$X_{oo}[1]$}] (box-z-2-east) at ([shift=(right:3)] sig-7) {};
+
+  \begin{scope}[every info/.append style={font=\scriptsize, inner sep=+.5pt, below=5pt}]
+
+    \path (sig-0) edge[current direction={pos=.27}] (box-w-1-east)
+    edge[current direction={pos=.1}] (box-w-2-east)
+    (sig-1) edge[current direction={pos=.9, info={$-1$}}] (box-w-2-east)
+    edge[current direction={pos=.85, info={$1$}}] (box-w-1-east);
+
+    \path (sig-2) edge[current direction={pos=.27}] (box-x-1-east)
+    edge[current direction={pos=.1}] (box-x-2-east)
+    (sig-3) edge[current direction={pos=.9, info={$-1$}}] (box-x-2-east)
+    edge[current direction={pos=.85, info={$1$}}] (box-x-1-east);
+
+    \path (sig-4) edge[current direction={pos=.27}] (box-y-1-east)
+    edge[current direction={pos=.1}] (box-y-2-east)
+    (sig-5) edge[current direction={pos=.9, info={$-1$}}] (box-y-2-east)
+    edge[current direction={pos=.85, info={$1$}}] (box-y-1-east);
+
+    \path (sig-6) edge[current direction={pos=.27}] (box-z-1-east)
+    edge[current direction={pos=.1}] (box-z-2-east)
+    (sig-7) edge[current direction={pos=.9, info={$-1$}}] (box-z-2-east)
+    edge[current direction={pos=.85, info={$1$}}] (box-z-1-east);
+
+  \end{scope}
+  
+  \node [contact] (conn-ee-0) at ([shift=(right:1.5)] box-w-1-east) {}
+  node [contact, label=right:{$X_e[0]$}] (conn-e-0) at ([shift=(right:5)] box-w-1-east) {}
+  node [contact, label=right:{$X[0]$}] (conn-0) at ([shift=(right:5)] conn-e-0) {};
+  \node [contact] (conn-ee-1) at ([shift=(right:1.5)] box-w-2-east) {}
+  node [contact, label=right:{$X_e[1]$}] (conn-e-1) at ([shift=(right:5)] box-w-2-east) {}
+  node [contact, label=right:{$X[1]$}] (conn-1) at ([shift=(right:5)] conn-e-1) {};
+
+  \node [contact] (conn-eo-0) at ([shift=(right:1.5)] box-x-1-east) {}
+  node [contact, label=right:{$X_e[2]$}] (conn-e-2) at ([shift=(right:5)] box-x-1-east) {}
+  node [contact, label=right:{$X[2]$}] (conn-2) at ([shift=(right:5)] conn-e-2) {};
+  \node [contact] (conn-eo-1) at ([shift=(right:1.5)] box-x-2-east) {}
+  node [contact, label=right:{$X_e[3]$}] (conn-e-3) at ([shift=(right:5)] box-x-2-east) {}
+  node [contact, label=right:{$X[3]$}] (conn-3) at ([shift=(right:5)] conn-e-3) {};
+
+  \node [contact] (conn-oe-0) at ([shift=(right:1.5)] box-y-1-east) {}
+  node [contact, label=right:{$X_o[0]$}] (conn-o-0) at ([shift=(right:5)] box-y-1-east) {}
+  node [contact, label=right:{$X[4]$}] (conn-4) at ([shift=(right:5)] conn-o-0) {};
+  \node [contact] (conn-oe-1) at ([shift=(right:1.5)] box-y-2-east) {}
+  node [contact, label=right:{$X_o[1]$}] (conn-o-1) at ([shift=(right:5)] box-y-2-east) {}
+  node [contact, label=right:{$X[5]$}] (conn-5) at ([shift=(right:5)] conn-o-1) {};
+  
+  \node [contact] (conn-oo-0) at ([shift=(right:1.5)] box-z-1-east) {}
+  node [contact, label=right:{$X_o[2]$}] (conn-o-2) at ([shift=(right:5)] box-z-1-east) {}
+  node [contact, label=right:{$X[6]$}] (conn-6) at ([shift=(right:5)] conn-o-2) {};
+  \node [contact] (conn-oo-1) at ([shift=(right:1.5)] box-z-2-east) {}
+  node [contact, label=right:{$X_o[3]$}] (conn-o-3) at ([shift=(right:5)] box-z-2-east) {}
+  node [contact, label=right:{$X[7]$}] (conn-7) at ([shift=(right:5)] conn-o-3) {};
+
+  \begin{scope}[every info/.append style={font=\scriptsize, inner sep=+.5pt, below=3pt}]
+
+    \path (conn-ee-0) edge[current direction={pos=.27}] (conn-e-0)
+    edge[current direction={pos=.1}] (conn-e-2)
+    (conn-eo-0) edge[current direction={pos=.9, info={$W_N^0$}}] (conn-e-0)
+    edge[current direction={pos=.85, info={$W_N^4$}}] (conn-e-2);
+
+    \path (conn-ee-1) edge[current direction={pos=.27}] (conn-e-1)
+    edge[current direction={pos=.1}] (conn-e-3)
+    (conn-eo-1) edge[current direction={pos=.9, info={$W_N^2$}}] (conn-e-1)
+    edge[current direction={pos=.85, info={$W_N^6$}}] (conn-e-3);
+
+    \path (conn-oe-0) edge[current direction={pos=.27}] (conn-o-0)
+    edge[current direction={pos=.1}] (conn-o-2)
+    (conn-oo-0) edge[current direction={pos=.9, info={$W_N^0$}}] (conn-o-0)
+    edge[current direction={pos=.85, info={$W_N^4$}}] (conn-o-2);
+
+    \path (conn-oe-1) edge[current direction={pos=.27}] (conn-o-1)
+    edge[current direction={pos=.1}] (conn-o-3)
+    (conn-oo-1) edge[current direction={pos=.9, info={$W_N^2$}}] (conn-o-1)
+    edge[current direction={pos=.85, info={$W_N^6$}}] (conn-o-3);
+
+    
+
+    \path (conn-e-0) ++(1.25,0) edge[current direction={pos=.27}] (conn-0)
+    edge[current direction={pos=.1}] (conn-4)
+    (conn-o-0) ++(1.25,0) edge[current direction={pos=.95, info={$W_N^0$}}] (conn-0)
+    edge[current direction={pos=.95, info={$W_N^4$}}] (conn-4);
+
+    \path (conn-e-1) ++(1.25,0) edge[current direction={pos=.27}] (conn-1)
+    edge[current direction={pos=.1}] (conn-5)
+    (conn-o-1) ++(1.25,0) edge[current direction={pos=.95, info={$W_N^1$}}] (conn-1)
+    edge[current direction={pos=.95, info={$W_N^5$}}] (conn-5);
+
+    \path (conn-e-2) ++(1.25,0) edge[current direction={pos=.27}] (conn-2)
+    edge[current direction={pos=.1}] (conn-6)
+    (conn-o-2) ++(1.25,0) edge[current direction={pos=.95, info={$W_N^2$}}] (conn-2)
+    edge[current direction={pos=.95, info={$W_N^6$}}] (conn-6);
+
+    \path (conn-e-3) ++(1.25,0) edge[current direction={pos=.27}] (conn-3)
+    edge[current direction={pos=.1}] (conn-7)
+    (conn-o-3) ++(1.25,0) edge[current direction={pos=.95, info={$W_N^3$}}] (conn-3)
+    edge[current direction={pos=.95, info={$W_N^7$}}] (conn-7);    
+    
+  \end{scope}
+
+  
+\end{tikzpicture}

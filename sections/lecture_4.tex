@@ -14,13 +14,13 @@ The \textbf{Fourier Synthesis} allows us to represent $x(t)$ as
 \end{equation}
 %
 The complex exponentials form a set of basis functions, and so we're interested in
-trying to compute the $\{a_k\}$ for a given $x(t)$. Multiplying through by
-$\ex{-\im n \omega_0 t}$,
+trying to compute the expansion coefficients, $\{a_k\}$ for a given $x(t)$.
+Multiplying through by $\ex{-\im n \omega_0 t}$,
 %
-\begin{align*}
-  x(t)\ex{-\im n\omega_0 t} &= \sum_{k=-\infty}^\infty a_k\ex{\im k\omega_0 t}\ex{-\im n\omega_0 t} \\
-  &= \sum_{k=-\infty}^\infty a_k\ex{\im (k-n)\omega_0 t} \,.
-\end{align*}
+\begin{displaymath}
+  x(t)\ex{-\im n\omega_0 t} = \sum_{k=-\infty}^\infty a_k\ex{\im k\omega_0 t}\ex{-\im n\omega_0 t}
+  = \sum_{k=-\infty}^\infty a_k\ex{\im (k-n)\omega_0 t} \,.
+\end{displaymath}
 %
 Integrating both sides on the interval $[0,T]$ and factoring the $\{a_k\}$ from the integrand,
 %
@@ -81,7 +81,7 @@ alone,
 %
 where the factor of two arises from the fact that $a_k = a_{-k}$, meaning the
 sum from $-\infty$ to $-1$ is the same as that from $\infty$ to $1$. The amplitude
-and phase, $A_k,\theta_k$ are recoverable from the spectral coefficient $a_k$.
+and phase, $\{A_k,\theta_k\}$ are recoverable from the spectral coefficient $a_k$.
 Alternatively, we can use the double angle formula to turn the phase into
 another sinusoid,
 %
@@ -112,12 +112,12 @@ another sinusoid,
   \begin{figure}[!htb]
     \includegraphics[width=\textwidth]{images/lecture_4_square_wave.JPG}
     \caption{
-      A square wave signal of period $2\pi$ and duty cycle of $0.5$.
+      A square wave signal of period $2\pi$, height 1 and duty cycle of $0.5$.
     }
     \label{fig::lecture_4_square_wave}
   \end{figure}
   %
-  We see that it is periodic with period $T = 2\pi$, and be extension its
+  We see that it is periodic with period $T = 2\pi$, and by extension its
   angular frequency is $\omega_0 = \frac{2\pi}{T} = 1$. The zeroth spectral
   coefficient is given by the integral of the signal over its time period,
   %
@@ -132,7 +132,8 @@ another sinusoid,
   integration,
   %
   \begin{align*}
-    a_k &= \frac{1}{2\pi}\int_{-\frac{\pi}{2}}^{\frac{\pi}{2}} \dx{t}\ex{-\im kt}
+    a_k &= \frac{1}{T}\int_0^T\dx{t}\ex{-\im k\omega_0 t}
+    = \frac{1}{2\pi}\int_{-\frac{\pi}{2}}^{\frac{\pi}{2}} \dx{t}\ex{-\im kt}
     = \left.\frac{1}{2\pi}\frac{-1}{\im k}\ex{-\im kt}\right|_{-\frac{\pi}{2}}^{\frac{\pi}{2}} \\
     &= -\frac{1}{2\pi\im k}\left(\ex{-\im k\frac{\pi}{2}} - \ex{\im k\frac{\pi}{2}}\right)
     = \frac{1}{2\pi\im k}\left(\ex{\im k\frac{\pi}{2}} - \ex{-\im k\frac{\pi}{2}}\right)
@@ -140,7 +141,7 @@ another sinusoid,
     &= \frac{1}{2}\sinc\left(\frac{k\pi}{2}\right) \,,
   \end{align*}
   %
-  where we have introduced the function $\sinc = \frac{\sin(x)}{x}$. Consequently,
+  where we have introduced the function $\sinc(x) = \frac{\sin(x)}{x}$. Consequently,
   we can write the first few spectral coefficients,
   %
   \begin{displaymath}
@@ -150,7 +151,7 @@ another sinusoid,
   \end{displaymath}
 \end{exmp}
 %
-It will be useful to have some intuition for how the $\sinc$ function looks. It is
+It will be useful to have some intuition for how $\sinc(x)$ looks. It is
 graphed in Figure \ref{fig::lecture_4_sinc}.
 %
 \begin{figure}[!htb]
@@ -168,7 +169,7 @@ graphed in Figure \ref{fig::lecture_4_sinc}.
 There are several types of function where the Fourier series doesn't really work. These
 are summarised by the \textbf{Dirichlet conditions} for a real-valued periodic function. If these
 conditions are satisfied, then the Fourier series converges absolutely to the
-function to which it is derived.
+function from which it is derived.
 %
 \begin{enumerate}
 \item The function must be square-integrable, i.e. $\int \dx{t}|x(t)|^2 < \infty$.
@@ -183,8 +184,10 @@ average value of the function at a discontinuity. To see this, let's consider Fi
 At each discontinuity, the Fourier series yields zero, the average value of the function
 at that point. Note also the overshoot in the Fourier series, referred to as the \textbf{Gibbs
 Phenomenon}. This overshoot can never be less that roughly $9\%$ the height of the
-discontinuity. The oscillations are referred to as \textbf{ringing artifacts} and the
-continual overshooting/ undershooting of the desired value is termed \textbf{clipping}. 
+discontinuity (the derivation of this quantity is fairly involved). The oscillations are
+referred to as \textbf{ringing artifacts}\footnote{
+  The output signal oscillates at a fading rate, much like a bell, hence ``ringing''
+}, and the continual overshooting/ undershooting of the desired value is termed \textbf{clipping}. 
 %
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_4_gibbs.JPG}
@@ -202,23 +205,23 @@ Suppose we have a periodic signal $x(t)$ with period $T$, whose Fourier series i
 $\{a_k\}$. Then:
 %
 \begin{enumerate}
-\item (\textbf{Linearity}) Given the signals $x(t) \Leftrightarrow \{a_k\}$ and
-  $y(t) \Leftrightarrow \{b_k\}$, then
+\item (\textbf{Linearity}) Given the signals $x(t) \Longleftrightarrow \{a_k\}$ and
+  $y(t) \Longleftrightarrow \{b_k\}$, then
   %
   \begin{displaymath}
-    \alpha x(t) + \beta y(t) \Leftrightarrow \{\alpha a_k + \beta b_k\} \,.
+    \alpha x(t) + \beta y(t) \Longleftrightarrow \{\alpha a_k + \beta b_k\} \,.
   \end{displaymath}
   %
-\item (\textbf{Time Shifting}) For $x(t) \Leftrightarrow \{a_k\}$ and
+\item (\textbf{Time Shifting}) For $x(t) \Longleftrightarrow \{a_k\}$ and
   $y(t) = x(t-t_0)$, then
   %
   \begin{displaymath}
-    y(t) \Leftrightarrow \{a_k\ex{-\im k\omega_0t_0}\} \,,
+    y(t) \Longleftrightarrow \{a_k\ex{-\im k\omega_0t_0}\} \,,
   \end{displaymath}
   %
   i.e. the magnitudes of the coefficients don't change, but the phases do.
-\item (\textbf{Differentiation}) For $x(t) \Leftrightarrow \{a_k\}$,
-  $x^\prime(t) \Leftrightarrow \{\im k\omega_0 a_k\}$. This is easily shown by
+\item (\textbf{Differentiation}) For $x(t) \Longleftrightarrow \{a_k\}$,
+  $x^\prime(t) \Longleftrightarrow \{\im k\omega_0 a_k\}$. This is easily shown by
   differentiating the complex exponential basis function.
 \item (\textbf{Parseval's Theorem}) There is the same amount of power in both time
   and frequency domains (i.e. no information loss),
@@ -227,8 +230,8 @@ $\{a_k\}$. Then:
     \frac{1}{T}\int_0^T \dx{t} |x(t)|^2 = \sum_{k=-\infty}^\infty |a_k|^2 \,.
   \end{displaymath}
   %
-\item (\textbf{Convolution}) For the signals $x(t) \Leftrightarrow \{a_k\}$ and
-  $y(t) \Leftrightarrow \{b_k\}$,
+\item (\textbf{Convolution}) For the signals $x(t) \Longleftrightarrow \{a_k\}$ and
+  $y(t) \Longleftrightarrow \{b_k\}$,
   %
   \begin{displaymath}
     x(t)y(t) \Longleftrightarrow \sum_{m=-\infty}^\infty a_m b_{k-m} = a * b \,,
@@ -240,5 +243,5 @@ $\{a_k\}$. Then:
     x* y = \int_0^T \dx{\tau} x(\tau)y(t-\tau) \Longleftrightarrow Ta_kb_k \,.
   \end{displaymath}
   %
-  In other words, convolution in one domain is multiplication in the other. 
+  In other words, convolution in one domain is multiplication in the other.
 \end{enumerate}

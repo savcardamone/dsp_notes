@@ -21,7 +21,7 @@ integrations over an infinitesimal in frequency,
 \end{figure}
 %
 Consider the aperiodic signal in Figure \ref{fig::lecture_5_enforce_periodicity}. We can force its periodicity (with
-period $T$) by duplicating it (also see Figure \ref{fig::lecture_5_enforce_periodicity}). We'll refer to this
+period $T$) by duplicating it. We'll refer to this
 signal with ``enforced periodicity'' as $\tilde{x}(t)$, its Fourier synthesis
 being
 %
@@ -48,7 +48,7 @@ Now, defining the \textbf{Fourier Transform} as
   X(\omega) = \int \dx{t} x(t)\ex{-\im\omega t} \,,
 \end{equation}
 %
-which allows us to formulate the Fourier coefficients as
+we can formulate the Fourier coefficients
 %
 \begin{displaymath}
   a_k = \frac{1}{T} X(k\omega_0) \,,
@@ -114,9 +114,6 @@ the types of signals that are viable candidiates for the Fourier transform:
 \item The signal must contain a finite number of extrema.
 \item The signal must contain a finite number of discontinuities.
 \end{enumerate}
-%
-We do not permit the Fourier transform of a periodic signal. While this appears
-to contravene (1), we note that the above criteria apply only to aperiodic signals.
 
 \subsection{Some Fourier Transform Identities}
 %
@@ -136,8 +133,8 @@ to contravene (1), we note that the above criteria apply only to aperiodic signa
     X(\omega) = \int \dx{t} \delta(t-t_0)\ex{-\im\omega t} = \ex{-\im\omega t_0} \,.
   \end{displaymath}
   %
-  These coefficients all have the same magnitude, but rotated on the unit circle in
-  the complex plane, and so all have different phase.
+  These coefficients all have the same magnitude, $\sqrt{\ex{-\im\omega t_0}\ex{\im\omega t_0}} = 1$,
+  but rotated on the unit circle in the complex plane, and so all have different phase.
 \item For the sum of delta functions $x(t) = \delta(t-t_0) + \delta(t+t_0)$,
   %
   \begin{displaymath}
@@ -256,21 +253,21 @@ delta functions that are spaced by $\omega_0$, as can be see in Figure
 \subsection{Properties of the Fourier Transform}
 %
 \begin{enumerate}
-\item (\textbf{Linearity}) Given the Fourier pairs $x(t) \Leftrightarrow X(\omega)$ and
-  $y(t) \Leftrightarrow Y(\omega)$, then
+\item (\textbf{Linearity}) Given the Fourier pairs $x(t) \Longleftrightarrow X(\omega)$ and
+  $y(t) \Longleftrightarrow Y(\omega)$, then
   %
   \begin{displaymath}
-    \alpha x(t) + \beta y(t) \Leftrightarrow \alpha X(\omega) + \beta Y(\omega) \,.
+    \alpha x(t) + \beta y(t) \Longleftrightarrow \alpha X(\omega) + \beta Y(\omega) \,.
   \end{displaymath}
   %
 \item (\textbf{Time Shifting}) Time-shifting results in a phase change in the
-  spectral coefficients, $x(t-t_0) \Leftrightarrow X(\omega)\ex{-\im\omega t_0}$.
+  spectral coefficients, $x(t-t_0) \Longleftrightarrow X(\omega)\ex{-\im\omega t_0}$.
 \item (\textbf{Real Signals}) If $x(t)$ is real, then $\Re(\omega) = \Re(-\omega)$
   and $\Im(\omega) = -\Im(-\omega)$, i.e. the real part is even and the imaginary
   part is odd.
 \item (\textbf{Even and Odd Signals}) For real $x(t)$,
-  $\mathrm{Even}(x(t)) \Leftrightarrow \Re(X(\omega))$ and
-  $\mathrm{Odd}(x(t)) \Leftrightarrow \im\Im(X(\omega))$.
+  $\mathrm{Even}(x(t)) \Longleftrightarrow \Re(X(\omega))$ and
+  $\mathrm{Odd}(x(t)) \Longleftrightarrow \im\Im(X(\omega))$.
 \item (\textbf{Differentiability})
   %
   \begin{displaymath}
@@ -280,4 +277,59 @@ delta functions that are spaced by $\omega_0$, as can be see in Figure
   \begin{displaymath}
     \int_{-\infty}^t \dx{\tau}x(\tau) \Longleftrightarrow \frac{1}{\im\omega}X(\omega) + \pi X(0)\delta(\omega) \,.
   \end{displaymath}
+\item (\textbf{Scaling}) Consider $x(t) \Longleftrightarrow X(\omega)$. Then,
+  %
+  \begin{displaymath}
+    x(at) = \frac{1}{|a|} X\left(\frac{\omega}{a}\right) \,.
+  \end{displaymath}
+  %
+  If $a$ is large, then $x(at)$ is squeezed and $\frac{1}{|a|} X\left(\frac{\omega}{a}\right)$
+  is stretched. Conversely, if $a$ is small then the opposite happens.
 \end{enumerate}
+
+\subsection{The Short-Time Fourier Transform}
+%
+The scaling property leads us to a rather profoud result, since it suggests
+a tradeoff between our ability to simultaneously ``concentrate'' both a
+function and its Fourier transform in their respective domains. This is a
+result that is one of the bedrocks of quantum theory, where position and
+momentum are Fourier transform pairs (to within Planck's constant), and
+manifests itself as the famous Heisenberg Uncertainty Principle, where
+once cannot simultaneously know both the position and momentum of a particle
+to arbitrary precision. Knowledge about the particle's position to infinite
+accuracy results in a complete loss of knowledge about the particle's
+momentum, and \textit{vice versa}. We see that this property is the same for
+the generic Fourier transform pairs we've considered in this chapter -- the
+Fourier transform of a delta function is a constant across all frequency,
+and \textit{vice versa}.
+%
+The complete derivation of the \textbf{Gabor Limit}, the maximum resolution
+with which both time and frequency can be quantified in signal processing,
+is presented in Section 3.11 of Brad Osgood's lecture notes on
+``The Fourier Transform and its Applications'', to which the reader is
+re-directed. We simply present the final result here,
+%
+\begin{equation}
+  \sigma_t\cdot\sigma_\omega \geq \frac{1}{4\pi} \approx \textrm{0.08\;Cycles} \,,
+\end{equation}
+%
+where $\sigma_t, \sigma_\omega$ are the standard deviations in the time and
+frequency domains, respectively.
+
+This Gabor limit presents us with an opportunity in signal processing. For a
+complex time domain signal, different frequencies appear at different times.
+Consider the example of playing an instrument -- in a simplistic sense,
+this is simply a sequence of notes, or discrete frequencies, in time. Yet, if
+we take the Fourier transform of an audio recording of the piece, all we can
+see is that these discrete frequencies were present in the time-domain signal,
+it tells us nothing about when in the piece the frequencies were active. In
+effect, we're presented with either an infinite precision in the time domain
+(the audio track) or an infinite precision in the frequency domain (the
+Fourier transform). And this is where the Gabor limit becomes important -- in
+principle, I can work out a little bit about both, as long as the product
+of standard deviations in time and frequency do not exceed $\frac{1}{4\pi}$.\\
+
+One method for generating a \textbf{spectrogram}, a plot of time against
+frequency upon which magnitudes are plotted (i.e. how ``active'' a certain
+frequency is at a certain point in time) is the is the
+\textbf{Short-Time Fourier Transform} (STFT). 

@@ -1,0 +1,201 @@
+\section{The Singular Value Decomposition}
+
+Consider the matrix $\matr{X}\in\mathbb{R}^{n\times m}$, which is the
+concatenation of a series of $m$ vectors, $\vec{x}_1,\hdots,\vec{x}_m$,
+%
+\begin{displaymath}
+  \matr{X} = \left[\begin{array}{cccc}
+      \vdots & \vdots & & \vdots \\
+      \vec{x}_1 & \vec{x}_2 & \hdots & \vec{x}_m \\
+      \vdots & \vdots & & \vdots
+    \end{array}\right] \,,
+\end{displaymath}
+%
+where $\vec{x}\in\mathbb{R}^n$. We assume that $n\gg m$. Each of these vectors
+describes a sample from some sample space, e.g. a picture of a face, the
+matrix $\matr{X}$ then collecting all such pictures together into a dataset.
+Another more pertinent example might be each $\vec{x}$ denoting the state of
+a system at a particular time (e.g. the frequency content), and the
+collection $\matr{X}$ represents the time evolution of the system.\\
+
+The \textbf{Singular Value Decomposition} (SVD) allows us to decompose the
+matrix $\matr{X}$ into the product of three matrices,
+%
+\begin{equation}
+  \matr{X} = \matr{U}\matr{\Sigma}\matr{V}^\top \,,
+\end{equation}
+%
+where $\matr{U}\in\mathbb{R}^{n\times n}, \matr{V}\in\mathbb{R}^{m\times m}$
+are unitary, and $\matr{\Sigma}\in\mathbb{R}^{n\times m}$ is diagonal.
+The SVD for a matrix $\matr{X}$ is guaranteed to exist and is unique.
+We also have that the diagonal elements of $\matr{\Sigma}$ are ordered in
+magnitude and non-negative, such that
+$\sigma_1 \geq \sigma_2 \geq \hdots \geq \sigma_m \geq 0$. To introduce some
+explicit notation, $\matr{U}$ are the left singular vectors of $\matr{X}$,
+$\matr{V}$ are the right singular vectors of $\matr{X}$ and $\matr{\Sigma}$
+are the singular values corresponding to the singular vectors.\\
+
+Each of these matrices has an associated physical intuition. The left singular
+vectors are the basis vectors in which the samples in $\matr{X}$ can be fully
+expressed (both a sample in $\matr{X}$ and a left singular vector are in
+$\mathbb{R}^n$, and $n$ basis vectors are required to fully describe the
+associated vector space, hence $\matr{U}\in\mathbb{R}^{n\times n}$. The singular
+values $\sigma_k$ express the ``importance'' of the combination of $\vec{u}_k$
+and $\vec{v}_k$ in describing $\matr{X}$. Finally, the right singular vectors
+quantify the content of each of the left singular vectors across the samples in
+$\matr{X}$. However, we use the transpose of $\matr{V}$, and so the rows are
+the quantities to which we should be ascribing intuition. The columns of
+$\matr{V}^\top$ quantify the amount of each basis state to make an $\vec{x}$,
+i.e. the first column of $\matr{V}^\top$ describes how to make $\vec{x}_1$, and
+so on.\\
+
+The product of matrices in the SVD can be written as a sum of outer
+products,
+%
+\begin{displaymath}
+  \matr{U}\matr{\Sigma}\matr{V}^\top
+  = \sum_{i=1}^m \vec{u}_i\sigma_i\vec{v}_i^\top
+\end{displaymath}
+%
+Since $\matr{X}$ only comprises $m$ vectors in an $n$-dimensional vector field,
+it's impossible to infer all of these basis states which space $\mathbb{R}^{n\times n}$,
+as the left singular vectors appear to claim to do. It transpires that only
+the first $m$ left singular vectors are meaningful -- the remaining $n-m$
+are to be discarded by virtue of the associated singular values being equal to zero.
+Consequently, when performing the SVD, we need only take the $\mathbb{R}^{n\times m}$
+sub-matrix of $\matr{U}$ and the $\mathbb{R}^{m\times m}$ sub-matrix of $\matr{\Sigma}$,
+which we'll denote with a caret,
+%
+\begin{displaymath}
+  \matr{X} = \hat{\matr{U}}\hat{\matr{\Sigma}}\matr{V}^\top \,,
+\end{displaymath}
+%
+which is referred to as the ``economy'' SVD and is typically the desired
+option since $n\gg m$, meaning the discarded sub-matrices are rather large.
+Note that each term in the summation over outer products yields a rank-one
+matrix, as per the definition of the rank of an outer product of vectors
+(it is formed from a linearly independent row and column, but every row
+and column in the outer product is formed from these, leading to all
+rows and columns in the outer product being linearly dependent).\\
+
+So, our SVD is a linear combination of rank-one matrices, each one scaled
+by a singular value, which effectively quantifies the importance of the
+term to the construction of $\matr{X}$. Typically, the SVD is truncated
+at some term $r$, beyond which point the singular values diminish the
+contribution of the corresponding outer products to being negligible.
+This truncated SVD is only approximately equal to $\matr{X}$,
+%
+\begin{displaymath}
+  \matr{X} \approx \tilde{\matr{X}}
+  = \tilde{\matr{U}}\tilde{\matr{\Sigma}}\tilde{\matr{V}}^\top \,,
+\end{displaymath}
+%
+where $\tilde{\matr{U}}\in\mathbb{R}^{r\times n}$,
+$\tilde{\matr{\Sigma}}\in\mathbb{R}^{r\times r}$ and
+$\tilde{\matr{V}}\in\mathbb{R}^{r\times m}$. This is formalised in the
+Eckart-Young theorem [1936], which states that
+%
+\begin{equation}
+  \argmin_{\mathrm{rank}(\tilde{\matr{X}}) = r}
+  \fnorm{\matr{X} - \tilde{\matr{X}}}
+  = \tilde{\matr{U}}\tilde{\matr{\Sigma}}\tilde{\matr{V}}^\top \,,
+\end{equation}
+%
+i.e. the best rank-$r$ approximation to $\matr{X}$ is given by the
+SVD truncated to the $r\th$ term. Hence a key function of the SVD --
+compression and matrix approximation. Since
+$\tilde{\matr{U}}, \tilde{\matr{\Sigma}}, \tilde{\matr{V}}$ contain
+far fewer elements than $\matr{X}$, they provide an excellent means to
+compress $\matr{X}$, albeit with some losses dictated by the truncation
+order $r$. Note that the truncated matrices
+$\tilde{\matr{U}}$ and $\tilde{\matr{V}}$ are no longer unitary. Rather,
+%
+\begin{displaymath}
+  \tilde{\matr{U}}^\top\tilde{\matr{U}} = \matr{I}_{r\times r},\quad
+  \tilde{\matr{U}}\tilde{\matr{U}}^\top \neq \matr{I}_{n\times n} \,,
+\end{displaymath}
+%
+and
+%
+\begin{displaymath}
+  \tilde{\matr{V}}\tilde{\matr{V}}^\top = \matr{I}_{r\times r},\quad
+  \tilde{\matr{V}}^\top\tilde{\matr{V}} \neq \matr{I}_{n\times n} \,,
+\end{displaymath}
+%
+as one would expect -- matrices of rank $r < n$ cannot be orthonormal
+in $\mathbb{R}^{n\times n}$.\\
+
+The matrix $\matr{X}^\top\matr{X}\in\mathbb{R}^{m\times m}$ is a columnwise
+correlation matrix, describing the correlation between columns, or samples,
+in the matrix $\matr{X}$, the diagonal being the autocorrelation of samples.
+As with all correlation matrices, it is positive semi-definite with real
+eigenvalues. Computing this correlation matrix using the economy SVD,
+%
+\begin{displaymath}
+  \matr{X}^\top\matr{X} =
+  \matr{V}\hat{\matr{\Sigma}}^\top\hat{\matr{U}}^\top
+  \hat{\matr{U}}\hat{\matr{\Sigma}}\matr{V}^\top
+  = \matr{V}\hat{\matr{\Sigma}}^2\matr{V}^\top \,,
+\end{displaymath}
+%
+by virtue of the unitarity of $\matr{U}$ and $\hat{\matr{\Sigma}}$ being
+diagonal. But note that this is the eigenvalue decomposition of
+the correlation matrix $\matr{X}^\top\matr{X}$ since
+%
+\begin{displaymath}
+  \matr{X}^\top\matr{X} = \matr{V}\hat{\matr{\Sigma}}^2\matr{V}^\top
+  \quad\Longleftrightarrow\quad
+  \matr{X}^\top\matr{X}\matr{V} = \matr{V}\hat{\matr{\Sigma}}^2 \,,
+\end{displaymath}
+%
+having taken advantage of the unitarity of $\matr{V}$. As such, the right
+singular vectors of the SVD of $\matr{X}$ are just the eigenvectors of
+the column-wise correlation matrix of $matr{X}$, with eigenvalues
+$\hat{\matr{\Sigma}}^2$. Similarly,
+%
+\begin{displaymath}
+  \matr{X}\matr{X}^\top =
+  \hat{\matr{U}}\hat{\matr{\Sigma}}\matr{V}^\top
+  \matr{V}\hat{\matr{\Sigma}}^\top\hat{\matr{U}}^\top
+  = \hat{\matr{U}}\hat{\matr{\Sigma}}^2\hat{\matr{U}}^\top \,,
+\end{displaymath}
+%
+and we see that $\hat{\matr{U}}$ are the eigenvectors of the row-wise
+correlation matrix $\matr{X}\matr{X}^\top$ with eigenvalues
+$\hat{\matr{\Sigma}}^2$. The first column of $\hat{\matr{U}}$ is then
+the most correlated with the row-space of $\matr{X}$, while the
+first column of $\matr{V}$ is the most correlated with the column-space
+of $\matr{X}$, with ``most'' being quantified by the eigenvalues contained
+within $\hat{\matr{\Sigma}}^2$. It proves to be inefficient to compute the
+SVD of the matrix $\matr{X}$ through eigendecomposition. Rather, these
+identities have been introduced to provide further intuition for the
+component matrices of the SVD.\\
+
+Let's reflect briefly on the meaning of eigenvectors of a correlation
+matrix. Consider the operation of reducing the dimensionality of a dataset
+down to a single dimension. This involves picking a unit vector, $\vec{u}$,
+and replacing each element in a data matrix $\vec{x}\in\matr{X}$ by its
+projection along $\vec{u}$, $\vec{u}^\top\vec{x}$. We should choose $\vec{u}$
+so that we retain as much of the variation of data in our dataset as possible
+(if the data are all oriented along a line and we select $\vec{u}$ orthogonal
+to this line, we lose all the data in the dataset). As such, we'd like to maximise
+the variance of $\vec{u}^\top\vec{x}$. The variance of the data along $\vec{u}$
+is given by $\vec{u}^\top\matr{X}\matr{X}^\top\vec{u}$, where $\matr{X}\matr{X}^\top$
+is the covariance matrix. Since this covariance matrix is postiive semi-definite,
+the unit vector $\vec{u}$ which maximises $\vec{u}^\top\matr{X}\matr{X}^\top\vec{u}$
+is simply the eigenvector with largest eigenvalue.\\
+
+Consider the Netflix problem, where the columns of $\matr{X}$ enumerate people
+and the rows of $\matr{X}$ enumerate films. The elements of $\matr{X}$ reflect
+a person's rating of a particular film. This matrix is sparse (people typically
+only rate a few films), and the problem is to make a recommendation to a person
+based on the films they've previously rated, using the ratings of other users.
+The eigenvectors of the correlation matrix $\matr{X}\matr{X}^\top$ (the correlation
+between films) are, in a sense, ``eigenfilms'' -- there are certainly fewer
+``types'' of film than there are films, and a few dominant eigenvectors of this
+correlation matrix should provide a suitable basis with which we can characterise
+each film. Given a person's previously rated films, we can characterise these
+in the basis of eigenfilms, weighted by whether they've viewed the film
+positively or not. A linear combination of these rated films in the space of
+eigenfilms can then be used to find other films in the vicinity in this space,
+and suggest these as films that the user is likely to enjoy.

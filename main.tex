@@ -45,7 +45,6 @@
 \newcommand{\dx}[1]{\mathrm{d}#1\mkern1mu}
 \newcommand{\dsqx}[1]{\mathrm{d}^2#1\mkern1mu}
 \newcommand{\infsum}[1]{\sum_{#1=-\infty}^\infty}
-\DeclareMathOperator{\sinc}{sinc}
 \newcommand{\red}[1]{\color{red}{#1}}
 \newcommand{\orn}[1]{\color{orange}{#1}}
 \newcommand{\yel}[1]{\color{yellow}{#1}}
@@ -53,6 +52,9 @@
 \newcommand{\blu}[1]{\color{blue}{#1}}
 \newcommand{\st}{^\mathrm{st}\mkern1mu}
 \renewcommand{\th}{^\mathrm{th}\mkern1mu}
+\newcommand\fnorm[1]{\left\lVert#1\right\rVert_F}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 % Get rid of stupid revtex numbering
 \def\thesection{\arabic{section}}
@@ -103,6 +105,7 @@
 \newpage
 \begin{appendices}
 \input{appendices/appendix_1.tex}
+\input{appendices/appendix_2.tex}
 \end{appendices}
 
 \end{document}

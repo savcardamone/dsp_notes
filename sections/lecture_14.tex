@@ -1,0 +1,79 @@
+\section{Lecture 14: Upsampling and Downsampling}
+
+\subsection{Discrete-Time Processing of Continuous-Time Signals}
+%
+In the previous lecture, we have a continuous-time signal, $x_c(t)$ which, when
+multiplied by the impulse train $d(t)$ yields a second continuous-time signal,
+$x_s(t)$, whose non-zero values are spaced by $T$ in time and is, in effect,
+a continuous-time version of a discrete-time signal. $x_s(t)$ would then be
+converted into a discrete-time signal $x_d[n]$. We also showed that for the CTFT,
+%
+\begin{displaymath}
+  X_s(\omega) = \frac{1}{T}\infsum{k}X_c(\omega - k\omega_s) \,,
+\end{displaymath}
+%
+where $\omega_s = \frac{2\pi}{T}$. The DTFT of $x_d[n]$ is retrieved by simply
+recalling that it is $2\pi$-periodic, and so the copies that appear in
+$X_s(\omega)$ are spaced $2\pi$ apart rather than $\omega_s$. The next piece of
+the puzzle involves the processing of $x_d[n]$ by some discrete-time system,
+resulting in the output discrete-time signal $y_d[n]$. Finally, we may wish to
+convert this back to a continuous-time signal, $y_r(t)$. Our question then is
+how do we create the discrete-time system such that it behaves like the
+frequency response of a continuous-time system.\\
+
+We know that the frequency responses of the first analog-to-digital stage is
+%
+\begin{displaymath}
+  X_d(\omega) = \frac{1}{T}\infsum{k}X_c\left(\frac{\omega - 2\pi k}{T}\right) \,,
+\end{displaymath}
+%
+and that of the final digital-to-analog state is
+%
+\begin{displaymath}
+  Y_r(\omega) = H_r(\omega)Y_d(\omega T) = \infsum{n} y_d[n]\sinc\left(\frac{t - nT}{T}\right) \,.
+\end{displaymath}
+%
+The middle stage can be modelled as
+%
+\begin{displaymath}
+  Y_d(\omega) = H(\omega)X_d(\omega) \,,
+\end{displaymath}
+%
+where $H(\omega)$ is the general frequency-response of the discrete-time system.
+We can simply bolt all of these stages together since the output of one
+stage forms the input of another,
+%
+\begin{displaymath}
+  Y_r(\omega) = H_r(\omega)Y_d(\omega T) = H_r(\omega)H(\omega)X_d(\omega)
+  = H_r(\omega)H(\omega T)\frac{1}{T}\infsum{k}X_c\left(\omega -\frac{2\pi k}{T}\right) \,.
+\end{displaymath}
+%
+Now, if we enforce the band-limit, such that for $|\omega| > \frac{\pi}{T}, X_c(\omega) = 0$,
+then
+%
+\begin{displaymath}
+  Y_r(\omega) = \left\{\begin{array}{ccl}
+  H(\omega T)X_c(\omega) & & |\omega| < \frac{\pi}{T} \\
+  0 & & \mathrm{otherwise}
+  \end{array}\right. \,,
+\end{displaymath}
+%
+since $H_r(\omega)$ is a band-pass filter. As such, the effective continuous-time frequency
+response is
+%
+\begin{displaymath}
+  Y_r(\omega) = H_{\mathrm{eff}}(\omega)X(\omega) \,,
+\end{displaymath}
+%
+where
+%
+\begin{displaymath}
+  H_{\mathrm{eff}}(\omega) = \left\{\begin{array}{ccl}
+  H(\omega T) & & |\omega| < \frac{\pi}{T} \\
+  0 & & \mathrm{otherwise}
+  \end{array}\right. \,.
+\end{displaymath}
+%
+Consequently, we can only design filters which are active when $|\omega| < \frac{\pi}{T}$,
+else the reconstruction filter will remove any effects outside of this range; if we
+want to make this interval wider, then we need to change the sampling rate.

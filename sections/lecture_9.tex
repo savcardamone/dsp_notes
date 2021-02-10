@@ -186,6 +186,19 @@ we'll make extensive use of partial fractions.
 \end{enumerate}
 %
 \begin{exmp}
+  Consider the unit impulse response $\delta[n-N]$. The Z-transform of this is
+  %
+  \begin{displaymath}
+    \mathscr{Z}(\delta[n-N]) = \infsum{n}\delta[n-N]z^{-n} = z^{-N} \,.
+  \end{displaymath}
+  %
+  We have previously seen that convolution with the unit impulse response
+  $\delta[n-N]$ delays a signal by $N$ units. Since convolution in the time-domain
+  is multiplication in the $z$-domain, multiplying a signal $X(z)$ by $z^{-N}$
+  has the effect of delaying the signal $x[n]$ by $N$ units.
+\end{exmp}
+%
+\begin{exmp}
   Consider
   %
   \begin{displaymath}

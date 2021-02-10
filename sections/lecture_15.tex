@@ -1,0 +1,175 @@
+\section{Lecture 15: Multirate Signal Processing and Polyphase Representations}
+%
+\subsection{Changing the Sample Rate By a Non-Integer Factor}
+%
+Previously, we discussed downsampling and upsampling by an integer rate.
+For downsampling by a factor of $M$, we first prefiltered with a low-pass
+filter with cutoff frequency $\pi/M$ and gain of $1$ to prevent aliasing,
+then downsampled by $M$. For upsampling by a factor of $L$, we padded our
+signal with $L-1$ zeroes between each of the original samples, then filtered
+with a low-pass filter with cutoff frequency $\pi/L$ and gain of $L$
+to interpolate.\\
+%
+Upsampling or downsampling by integer rates is rather restrictive; there are
+many situations where we'd like to use non-integer rates. Consider changing
+the sampling rate by the non-integer factor $\tau$, which can be written as
+the quotient of two integers, $M/L$. We could in principle make some combination
+of upsampling by $L$ and downsampling by $M$ to achieve this. So,
+%
+\begin{displaymath}
+  x[n] \longrightarrow \boxed{\uparrow L}
+  \longrightarrow \boxed{H_\mathrm{int}(\omega)}
+  \longrightarrow \boxed{H_\mathrm{pre}(\omega)}
+  \longrightarrow \boxed{\downarrow M}
+  \longrightarrow x_\tau[n] \,.
+\end{displaymath}
+%
+Note that the interpolating filter and prefilter can be condensed into a single
+filter; in the frequency domain, we need simply multiply them together, which
+results in a single low-pass filter whose cutoff frequency is dictated by
+the smallest cutoff frequency of the other two,
+%
+\begin{displaymath}
+  H_\tau(\omega) = H_\mathrm{int}(\omega)H_\mathrm{pre}(\omega)
+  \quad \omega_c = \min\left(\frac{\pi}{M},\frac{\pi}{L}\right) \,.
+\end{displaymath}
+%
+If $M>L$, we have a net reduction in sampling rate, meaning $H_\tau(\omega)$
+is $H_\mathrm{pre}(\omega)$, and we need to prevent possible aliasing. If
+$L>M$, we have a net increase in sampling rate, meaning $H_\tau(\omega)$ is
+$H_\mathrm{int}(\omega)$, and we need to interpolate the signal. To give some
+numbers, assume $\tau = 1.2$, then we need to upsample by a factor of $5$
+and downsample by a factor of $6$, meaning we need to use
+$H_\mathrm{pre}(\omega)$.
+
+\subsection{The Noble Identities}
+%
+This strategy is problematic. Consider $\tau = 1.01$, where $M = 101$ and
+$L = 100$, which seems rather wasteful since we're implementing large intermediate
+changes in rate to retrieve a signal which is close to the original rate. We then
+ask whether this process can be done more efficiently, to which the answer is of
+course yes, and is referred to as \textbf{multirate signal processing}.
+%
+\begin{iden}[\textbf{The Noble Identity for Decimation}]
+  The processes
+  %
+  \begin{displaymath}
+    x[n] \longrightarrow \boxed{\downarrow M} \longrightarrow x_a[n]
+    \longrightarrow \boxed{H(z)} \longrightarrow y_a[n]
+  \end{displaymath}
+  %
+  and
+  %
+  \begin{displaymath}
+    x[n] \longrightarrow \boxed{H\left(z^M\right)} \longrightarrow x_b[n]
+    \longrightarrow \boxed{\downarrow M} \longrightarrow y_b[n]
+  \end{displaymath}
+  %
+  are equivalent.\\
+
+  Let's consider the meaning of $H(z^M)$ for a little insight:
+  %
+  \begin{displaymath}
+    H(z^M) = \infsum{n} h[n]z^{-Mn} = \mathscr{Z}(h_e[n]) \,,
+  \end{displaymath}
+  %
+  where $h_e[n]$ is a zero-padded version of $h[n]$, with $M-1$ zeroes between
+  each sample. Recall that to transform between the $\omega$ and $z$ domains,
+  we have the relationship
+  %
+  \begin{displaymath}
+    X(\omega) = \left. X(z) \right|_{z = \ex{\im\omega}} \,.
+  \end{displaymath}
+  %
+  Consequently, we can write the expression
+  %
+  \begin{displaymath}
+    X_b(\omega) = H\left(z^M\right)X(\omega) = H\left(\ex{\im\omega M}\right)X(\omega)
+    = H(\omega M) X(\omega)
+  \end{displaymath}
+  %
+  since
+  %
+  \begin{displaymath}
+    \left.H\left(z^M\right)\right|_{z=\ex{\im\omega}}
+    = \infsum x[n]\ex{\im\omega nM} = H(\omega M) \,.
+  \end{displaymath}
+  %
+  We saw in the previous lecture that the downsampling block of $X_b(\omega)$ results in
+  %
+  \begin{displaymath}
+    Y_b(\omega) = \frac{1}{M}\sum_{m=0}^{M-1}X\left(\frac{\omega - 2\pi m}{M}\right)
+    H(\omega - 2\pi m)
+    = H(\omega)\frac{1}{M}\sum_{m=0}^{M-1} X\left(\frac{\omega - 2\pi m}{M}\right) \,,
+  \end{displaymath}
+  %
+  since $H(\omega)$ is $2\pi$-periodic. But this is simply $H(\omega)$ multiplied by
+  the result from having first downsampled by $X(\omega)$ by $M$, and consequently we
+  have proven that $Y_b(\omega) = Y_a(\omega)$.
+\end{iden}
+%
+\begin{iden}[\textbf{The Noble Identity for Interpolation}]
+  The processes
+  %
+  \begin{displaymath}
+    x[n] \longrightarrow \boxed{\uparrow L} \longrightarrow x_a[n]
+    \longrightarrow \boxed{H(z)} \longrightarrow y_a[n]
+  \end{displaymath}
+  %
+  and
+  %
+  \begin{displaymath}
+    x[n] \longrightarrow \boxed{H\left(z^L\right)} \longrightarrow x_b[n]
+    \longrightarrow \boxed{\uparrow L} \longrightarrow y_b[n]
+  \end{displaymath}
+  %
+  are equivalent.\\
+
+  Recall that upsampling shrinks the spectrum in the frequency domain by a factor
+  $L$. Then
+  %
+  \begin{displaymath}
+    Y_a(\omega) = X_a(\omega L) = X(\omega L)H(\omega L) \,,
+  \end{displaymath}
+  %
+  and similarly
+  %
+  \begin{displaymath}
+    X_b(\omega) = X(\omega L) \,,
+  \end{displaymath}
+  %
+  meaning
+  %
+  \begin{displaymath}
+    Y_b(\omega) = X(\omega L)H(\omega L) \,,
+  \end{displaymath}
+  %
+  and we've proven that $Y_a(\omega) = Y_b(\omega)$. This seemingly innocent looking
+  interchange has important computational consequences. If we upsample first, we increase
+  our signal length by a factor of $L$, most of the elements being zero. This then
+  results in a lot of redundant computation by the subsequent filter which has to
+  process the signal in serial. In contrast, if we filter first, we have a significantly
+  reduced computational overhead, which can later be upsampled.
+\end{iden}
+
+\subsection{The Polyphase Decomposition}
+%
+Consider some signal $h[n]$, an example of which is depicted in Figure QQ. We can think
+of this sum as a sum of simpler signals; $h[n]$ is decomposed into a sum of $M$
+subsequences $h_k[n]$, defined as follows,
+%
+\begin{displaymath}
+  h_k[n] = h[k + nM] \,,
+\end{displaymath}
+%
+which is the original sequence delayed by $k$ units and zero-padded with $M-1$ zeroes
+between each of the originally sampled points. This is simplest to understand pictorially;
+for $M=3$, pane (b) of Figure QQ shows the decomposition. We see that the original
+signal is simply the summation of these subsequences,
+%
+\begin{displaymath}
+  h[n] = \sum_{k=0}^{M-1}h_k[n-k] \,.
+\end{displaymath}
+%
+Let $e_k[n]$ denote a corresponding $h_k[n]$ whose zero-padding has been removed, i.e.
+$e_k[n] = h_k[nM]$. These are termed the polyphase components of $h[n]$.

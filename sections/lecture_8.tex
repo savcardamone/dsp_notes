@@ -22,8 +22,8 @@ the Laplace transform,
 where $s\in\mathbb{C}$. While the Fourier transform is a complex
 function of a real variable $\omega$, the Laplace transform is a
 complex function of a complex variable, $s$. The discrete-time
-version of the Laplace transform is the \textbf{Z-transform}, is
-the Laurent series
+version of the Laplace transform is the \textbf{Z-transform},
+given by the Laurent series
 %
 \begin{equation}
   X(z) = \infsum{n}x[n]z^{-n} \,,
@@ -82,7 +82,7 @@ that $X(z)$ converges when $x[n]r^{-n}$ is absolutely summable.
 %
 \begin{exmp}
   For the step function,
-  $\lim{N\rightarrow\infty}\sum_{n=-\infty}^N|u[n]|\rightarrow\infty$,
+  $\lim_{N\rightarrow\infty}\sum_{n=-\infty}^N|u[n]|\rightarrow\infty$,
   and as a result isn't amenable to DTFT methods. However,
   %
   \begin{displaymath}
@@ -112,7 +112,8 @@ polynomial are referred to as \textbf{zeroes}. When $D(z)\rightarrow 0$,
 $X(z)\rightarrow\infty$. The roots of this polynomial are referred
 to as \textbf{poles}. The Z-transform requires the definiton of \textit{both} the
 ROC and the algebraic form for $X(z)$ so that the poles and zeroes can
-be ascertained.
+be ascertained, although note that the definition of the ROC is redundant since
+it can be established from the locations of poles.
 %
 \begin{exmp}
   Consider the right-sided exponential, $x[n] = a^n u[n]$. When $a<1$, we
@@ -133,7 +134,8 @@ be ascertained.
   \end{displaymath}
   %
   This transfer function has a zero at $z=0$ and pole at $z=a$. We can
-  depict all of this in a \textbf{Pole-Zero Plot}, as per Figure QQ.
+  depict all of this in a \textbf{Pole-Zero Plot}, where crosses denote
+  poles and noughts zeroes in the complex plane; the ROC is then shaded.
 \end{exmp}
 %
 \begin{exmp}
@@ -141,7 +143,7 @@ be ascertained.
   the right-sided exponential, is not absolutely summable for $a>1$. Then,
   %
   \begin{displaymath}
-    X(z) = -\infsum_{n}a^n u[-n-1]z^{-n}
+    X(z) = -\infsum{n}a^n u[-n-1]z^{-n}
     = -\sum_{n=-\infty}^{-1}\left(\frac{a}{z}\right)^n
     = -\sum_{n=1}^{\infty}\left(\frac{z}{a}\right)^n \,.
   \end{displaymath}
@@ -299,11 +301,11 @@ be ascertained.
 \subsection{Rules About the ROC}
 %
 \begin{enumerate}
-\item The ROC is a rang or disk centred at the origin.
+\item The ROC is a ring or disk centred at the origin.
 \item The ROC contains no poles.
 \item If $x[n]$ is of finite length, then the ROC is the complex
   plane with the exception of $0,\infty$.
-\item If $x[n]$ is left-sided, then the ROC is contained within a cicle.
+\item If $x[n]$ is left-sided, then the ROC is contained within a circle.
   If $x[n]$ is right-sided, then the ROC is outside of a circle. If $x[n]$
   is two-sided then the ROC is the annular region bounded by poles.
 \item The ROC for a transfer function $H(z)$ tells us whether the system

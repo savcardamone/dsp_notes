@@ -151,11 +151,11 @@ $\omega_s$-periodic, the DTFT is $2\pi$-periodic, so replicas of $X(\omega)$
 would be situated $2\pi$ apart on the frequency axis. The bandlimit, $\omega_B$
 would be similarly scaled to appear at $\frac{2\pi\omega_b}{\omega_s} = \omega_B T$.\\
 
-Thinking about this in the time domain, given $H_r(\omega)$ is a top hat on
-$\left[-\frac{\omega_s}{2},\frac{\omega_s}{2}\right]$, the impulse response
-$h_r(t)$ must be given by the sinc function
-$h_r(t) = \sinc\left(\frac{\pi t}{T}\right)$, and the time-domain signal
-we recover from the sampled signal is
+Thinking about this in the time domain, given $H_r(\omega)$ is
+$T\rect{\omega/\omega_s} = T\rect{\omega T/2\pi}$, the impulse response
+must be $h_r(t) = \sinc\left(\frac{\pi t}{T}\right)$, a $\sinc$ whose zeroes
+are at integer multiples of $T$. The time-domain signal we recover from the sampled
+signal is then
 %
 \begin{displaymath}
   x(t) = x_s(t)*h_r(t) = \infsum{n} x[n]\sinc\left(\frac{\pi}{T}(t - nT)\right) \,.
@@ -175,3 +175,43 @@ given by the summation over an infinite number of sinc functions at that point.
   \label{fig::lecture_13_sincs}
 \end{figure}
 %
+\begin{exmp}
+  Consider a cosine and its Fourier transform
+  %
+  \begin{displaymath}
+    x(t) = \cos(\omega_0 t) \quad\Longleftrightarrow\quad
+    X(\omega) = \delta(\omega+\omega_0) + \delta(\omega-\omega_0) \,.
+  \end{displaymath}
+  %
+  The sampling theorem tells us that to avoid aliasing, we must choose
+  a sampling frequency that is greater than $2\omega_0$; an example of this
+  is given in Figure QQ. However, consider the case where $\omega_0=1$ and
+  $\omega_s = 3/2$ as depicted in Figure \ref{fig::lecture_13_aliasing_cosine}.
+  Since $\omega_s < 2\omega_0$, we observe the creation of frequencies at
+  $\pm\frac{1}{2}$. Since the reconstruction filter cutoff is
+  $\omega_s/2 = 3/4$, the reconstructed signal is $\cos(\frac{1}{2}t)$; aliasing
+  produces the wrong result.
+  %
+  \begin{figure}[!htb]
+    \includegraphics[width=\textwidth]{images/lecture_13_aliasing_cosine.JPG}
+    \caption{
+    }
+    \label{fig::lecture_13_aliasing_cosine}
+  \end{figure}
+  %
+\end{exmp}
+%
+\begin{exmp}
+  Consider $\cos(\omega_0 t)$, where $\omega_0 = 1$ and $\omega_s = 2$,
+  precisely twice the highest frequency component of the signal. The sampling
+  period is $T = 2\pi / \omega_s = \pi$, meaning we sample the signal at
+  integer multiples of $\pi$. For the cosine, this yields sampled values of
+  $\pm 1$, so it seems that we can sample a cosine at the Nyquist rate with
+  no issue.\\
+  %
+  However, consider now $\sin(\omega_0 t)$, parameterised in the same way as
+  above. Sampling this signal at integer multiples of $\pi$ yields zero each
+  time, and we're unable to recreate our original signal. Hence the reason
+  that the sampling rate should be \textbf{above} the Nyquist rate, to
+  accommodate this worst-case scenario.
+\end{exmp}

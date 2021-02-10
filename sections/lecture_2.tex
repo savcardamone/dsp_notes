@@ -160,3 +160,14 @@ The summation is a special mathematical form, referred to as convolution and den
 \end{equation}
 %
 The unit impulse response fully characterises an LTI system.
+%
+\begin{exmp}
+  Consider the impulse response $\delta[n-N]$ convolved with some generic input,
+  %
+  \begin{displaymath}
+    y[n] = x[n] * \delta[n-N] = \infsum{k}x[n]\delta[n-k-N] = x[n-N] \,,
+  \end{displaymath}
+  %
+  i.e. the unit impulse response $\delta[n-N]$ has the effect of delaying the
+  signal by $N$ units.
+\end{exmp}

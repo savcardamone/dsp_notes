@@ -23,6 +23,8 @@
 \usepackage{enumitem}
 \usepackage[toc,page]{appendix}
 \usepackage[mathscr]{euscript}
+\usepackage{minted}
+\usepackage{mdframed}
 
 \usetikzlibrary{positioning,circuits.ee.IEC}
 
@@ -46,6 +48,7 @@
 \newcommand{\dsqx}[1]{\mathrm{d}^2#1\mkern1mu}
 \newcommand{\infsum}[1]{\sum_{#1=-\infty}^\infty}
 \newcommand{\rect}[1]{\Pi\left(#1\right)}
+\newcommand{\ddx}[1]{\frac{\mathrm{d}}{\mathrm{d#1}}}
 
 \newcommand{\red}[1]{\color{red}{#1}}
 \newcommand{\orn}[1]{\color{orange}{#1}}
@@ -54,7 +57,7 @@
 \newcommand{\blu}[1]{\color{blue}{#1}}
 \newcommand{\st}{^\mathrm{st}\mkern1mu}
 \renewcommand{\th}{^\mathrm{th}\mkern1mu}
-\newcommand\fnorm[1]{\left\lVert#1\right\rVert_F}
+\newcommand\fnorm[1]{\left\lVert#1\right\rVert}
 \DeclareMathOperator{\sinc}{sinc}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
@@ -103,6 +106,8 @@
 \input{sections/lecture_13.tex}
 \input{sections/lecture_14.tex}
 \input{sections/lecture_15.tex}
+\input{sections/lecture_16.tex}
+\input{sections/lecture_17.tex}
 
 %%%
 %%% Appendices

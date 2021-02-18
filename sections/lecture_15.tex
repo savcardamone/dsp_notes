@@ -172,4 +172,51 @@ signal is simply the summation of these subsequences,
 \end{displaymath}
 %
 Let $e_k[n]$ denote a corresponding $h_k[n]$ whose zero-padding has been removed, i.e.
-$e_k[n] = h_k[nM]$. These are termed the polyphase components of $h[n]$.
+$e_k[n] = h[nM + k] = h_k[nM]$. These are termed the polyphase components of $h[n]$.
+Now, consider the Z-transform of $h[n]$ and split it into $M$ distinct sums,
+%
+\begin{align*}
+  H(z) &= \infsum{k} h[k]z^{-k}
+  = \infsum{\ell}h[\ell M]z^{-\ell M} + \infsum{\ell}h[\ell M+1]z^{-(\ell M + 1)} + \hdots \\
+  &= \sum_{k=0}^{M-1}\infsum{\ell}h[\ell M + k]z^{-(\ell M + k)}
+  = \sum_{k=0}^{M-1}z^{-k}\infsum{\ell}h[\ell M + k]z^{-\ell M} \\
+  &= \sum_{k=0}^{M-1}z^{-k} \infsum{\ell}e_k[\ell]z^{-\ell M}
+  = \sum_{k=0}^{M-1}z^{-k}\mathscr{E}_k\left(z^M\right) \,,
+\end{align*}
+%
+where $\mathscr{E}_k\left(z^M\right)$ is the Z-transform of the $k\th$ polyphase
+component shifted by $M$. Using this as a transfer function, we see that the
+$k\th$ term in this summation is the input delayed by $k$ (since
+$X(z)z^{-k} \Longleftrightarrow x[n-k]$) multiplied by the $k\th$ polyphase
+component shifted by $M$, $\mathscr{E}\left(z^M\right)$. Each of these terms
+is then summed to yield the output, $Y(z)$. This is the \textrm{polyphase realisation}
+of $H(z)$.\\
+
+\subsubsection{Polyphase Downsampling}
+%
+Now, let's think again about downsampling, where we prefiltered to prevent aliasing
+then downsampled the signal. By using the polyphase realisation of our prefilter,
+we can implement this as depicted in pane (a) of Figure QQ. The signal is passed
+through $\mathscr{E}_0\left(z^M\right)$ on the first branch; on the second branch, it
+is first delayed by the $z^{-1}$ block, then passed through $\mathscr{E}_1\left(z^M\right)$,
+at which point it is summed with the result from the first branch. This is precisely
+what the first two terms in the summation above represent, and proceeds up to
+$\mathscr{E}_{M-1}\left(z^M\right)$. Once the summation has been completed, the
+downsampling $M$ completes the process and we're left with our downsampled signal.\\
+%
+The polyphase realisation of the prefilter doesn't seem to have accomplished much;
+consider a filter of length 400 that we downsample by a factor of 50; there are
+then 50 polyphase components of the filter, each of length 8. For every value of the
+input, this means we need to complete $8\times 50 = 400$ multiplications, exactly
+the same had we kept the prefilter in its original form, albeit we've expressed
+some parallelism. But we recall that the Noble identity for decimation allows
+us to interchange the order of filtering and downsampling while changing the argument
+of the filter from $z^M$ to $z$. This means we can implement the polyphase downsampling
+as depicted in pane (b) of Figure QQ. Now since we downsample first, we pass $M$
+times fewer values through each of the polyphase components, and our complexity
+per input value becomes $400 / 8 = 50$ multiplications. So, the polyphase
+downsampling lets us save a factor of $M$ in computational complexity. This is
+a useful result since the larger the downsampling factor, the more data points
+we're throwing away after having expended computational effort in prefiltering.
+Now the complexity is independent of the downsampling factor, meaning we
+don't waste effort.

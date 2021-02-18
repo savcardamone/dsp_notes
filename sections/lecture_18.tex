@@ -258,7 +258,15 @@ graphed in Figure \ref{fig::lecture_18_analog_filters}.\\
 %
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_18_analog_filters.JPG}
-  \caption{
+  \caption{Four main types of analog filter. In pane (a), a Butterworth
+    filter is shown which has frequency response as flat as possible in the
+    pass-band (also referred to as a maximally flat magnitude filter). In
+    pane (b), a Type I Chebyshev filter is shown, which has ripple in the
+    pass-band but is flat in the stop-band. In pane (c), a Type II Chebyshev
+    filter is shown, which has ripple in the stop-band but is flat in the
+    pass-band. Finally, in pane (c) an elliptic filter is shown, which
+    has equialised ripple in both the pass-band and stop-band (also
+    referred to as a Cauer filter).
   }
   \label{fig::lecture_18_analog_filters}
 \end{figure}
@@ -297,12 +305,30 @@ between the $s$ and $z$ domains,
   z = \frac{\frac{2}{T} + s}{\frac{2}{T} - s}
 \end{displaymath}
 %
+Some examples of this \textbf{bilinear transformation} are presented in
+Figure \ref{fig::lecture_18_bilinear_transform}.
+%
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_18_bilinear_transform.JPG}
-  \caption{
+  \caption{Examples of the bilinear transform between the $s$ and
+    $z$ domains. Note that for the imaginary axis in the $s$ domain,
+    $\im u$, $u$ is the continuous-time frequency with infinite range.
+    The positive part of the $\im u$ axis wraps around to
+    $0 \leq \omega \leq \pi$ in the $z$ domain, while the negative
+    part of the $\im u$ axis wraps around to $-\pi \geq \omega \geq 0$
+    in the $z$ domain. The hatched regions are those areas of the respective
+    domains where the transforms don't converge; the left-half plane in
+    the $s$ domain maps to the interior of the unit circle in the $z$ domain.
   }
   \label{fig::lecture_18_bilinear_transform}
 \end{figure}
+%
+Consider the magnitude responses of the analog and digital filters in
+Figure \ref{fig::lecture_18_prewarp}. These two filters are equivalent;
+the cutoff frequency in the analog case transforms to some other
+cutoff frequency in the digital case. Consequently, one has to take
+steps to make sure the cutoff of the analog filter is chosen so as
+to produce the desired cutoff in the digital filter.\\
 %
 The main idea is then to prewarp the desired digital filter cutoff
 frequencies to the corresponding analog cutoffs using the $z\rightarrow s$
@@ -317,7 +343,10 @@ on stretched in the $z$ domain, its magnitude will not change.
 %
 \begin{figure}[!htb]
   \includegraphics[width=\textwidth]{images/lecture_18_prewarp.JPG}
-  \caption{
+  \caption{The magnitude responses of an analog filter (left) and its
+    digital counterpart (right). Under the
+    bilinear transformation, $\omega_c\rightarrow\omega_d$. Also note
+    that the mapping from $u=\infty$ to $z=\pi$ is shown.
   }
   \label{fig::lecture_18_prewarp}
 \end{figure}

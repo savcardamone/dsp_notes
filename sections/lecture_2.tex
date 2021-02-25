@@ -171,3 +171,28 @@ The unit impulse response fully characterises an LTI system.
   i.e. the unit impulse response $\delta[n-N]$ has the effect of delaying the
   signal by $N$ units.
 \end{exmp}
+
+\subsection{Importance of Phasors in LTI Systems}
+%
+Consider the causal convolutional sum
+%
+\begin{displaymath}
+  y[n] = x[n] * h[n] = \sum_{k=0}^{N-1} h[k]x[n-k] \,, 
+\end{displaymath}
+%
+a sum of delayed inputs $x[n-k]$ that are weighted by $h[k]$. Define
+the input as a complex sinusoid, $x[n] = \ex{\im\omega n}$. Then
+%
+\begin{align*}
+  y[n] &= \sum_{k=0}^{N-1} h[k]x[n-k] = \sum_{k=0}^{N-1} h[k]\ex{\im\omega(n-k)}
+  = \sum_{k=0}^{N-1} h[k]\ex{\im\omega n}\ex{-\im\omega k} \\
+  &= \ex{\im\omega n}\sum_{k=0}^{N-1}h[k]\ex{-\im\omega k}
+  = x[n] \sum_{k=0}^{N-1}h[k]\ex{-\im\omega k} \,.
+\end{align*}
+%
+An LTI system acting on a complex sinusoid then involves a calculation involving
+only phasors, with phasor magnitude $h[k]$ and phasor angle $-\omega k$. Since
+all signals can be expressed as a linear combination of
+complex sinusoids, this treatment can be applied to any signal by expanding it
+into a weighted sum of complex sinusoids -- this is the motivation for
+the Fourier transform, which we'll encounter in a later lecture.

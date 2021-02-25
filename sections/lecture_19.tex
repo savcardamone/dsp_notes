@@ -1,0 +1,324 @@
+\section{Lecture 19: Introduction to Adaptive Filtering and ARMA Processes}
+
+Consider the case where we have a signal, $X(\omega)$, that contains some
+noise localised to a frequency band. Call the spectrum of the noise
+$N(\omega)$ which is non-zero over some finite interval somewhere
+in the spectrum. We have spent the last few lectures discussing how
+we might design a filter to remove this noise component; we need
+a band-stop filter that is zero over the noise interval, one one
+elsewhere. Filtering the input signal with this filter then removes
+the noise, resulting in a ``clean'' output.\\
+%
+However, it's typically the case that noise isn't localised to some
+well-defined interval in frequency. Rather, we know about some
+probability distribution of the noise, and we'd like to design a filter
+that's optimal in terms of removing the noise in an expected value
+sense. It's also possible that the noise spectrum may be dynamic in
+time, and so the filter must also be able to change to handle the
+dynamics. Such filters are referred to as \textbf{adaptive}, and
+are characterised by time-dependent filter taps.\\
+%
+The field of adaptive filters is very large, and we can only cover
+the basics in this lecture. There are a number of difficulties in
+the design and use of adaptive filters, prominent among which are:
+%
+\begin{itemize}
+\item Rate of convergence of the filter.
+\item Quality of the tracking of unwanted components in time.
+\item Robustness with regards to removing unwanted components.
+\item Complexity of the filter.
+\end{itemize}
+%
+In this lecture, we'll look to combine our knowledge of filters from
+the previous lectures with probability theory and stochastic processes.\\
+
+\subsection{Stochastic Processes}
+%
+Consider a stochastic $x[n]$, whose cumulative distribution function is
+given by
+%
+\begin{displaymath}
+  P\left(x[n] < t\right) = \int_{-\infty}^t\dx{\tau} p_n(\tau) \,,
+\end{displaymath}
+%
+where $p_n(\tau)$ is an underlying probability density function. There
+are several probabilistic descriptors that we'll need to recall. The
+mean, for instance, is the expectation of the signal, both of which
+are time-dependent
+%
+\begin{displaymath}
+  \mu[n] = \mathbb{E}(x[n]) = \int_{-\infty}^\infty\dx{\tau}\tau p_n(\tau) \,,
+\end{displaymath}
+%
+and the covariance which describes how the signal at times $n$ and
+$n-k$ are related
+%
+\begin{displaymath}
+  c(n,n-k) = \mathbb{E}((x[n]-\mu[n])(x[n-k] - \mu[n-k])) \,.
+\end{displaymath}
+%
+In this case, since we're describing the covariance within the same
+signal, we refer to this as the \textbf{auto-covariance}. We'll assume
+that we're working with real signals so that we don't have to worry
+about conjugation. Also, we define the \textbf{auto-correlation},
+%
+\begin{displaymath}
+  r(n,n-k) = \mathbb{E}(x[n]x[n-k]) \,,
+\end{displaymath}
+%
+which we see is simply the auto-covariance without first subtracting
+the mean.\\
+%
+A stochastic process is \textbf{stationary} if the statistical properties
+are time-invariant, making analysis easier since
+%
+\begin{displaymath}
+  \mu[n] = \mu \quad\forall n \,,
+\end{displaymath}
+%
+and the auto-correlation becomes invariant with regards to shifts; we
+can shift the signal by $m$ units and the auto-correlation remains the
+same, meaning the auto-correlation depends only on the ``difference''
+in time between the two samples
+%
+\begin{displaymath}
+  r(n,n-k) = r(n+m,n+m-k) = r(k) \quad\forall k\,,
+\end{displaymath}
+%
+where $k$ is referred to as the \textbf{lag}. The auto-covariance also
+exhibits this behaviour. It should be noted that while these conditions
+are necessary for a stochastic process to be stationary, they are
+not sufficient; there are other properties that must hold for the process
+to be stationary. A process is \textbf{wide-sense stationary} (WSS) if
+the above conditions hold. WSS processes are typically adequate for
+the treatment of signals that we care about. In particular, if $x[n]$
+is WSS, then
+%
+\begin{displaymath}
+  \mathbb{E}(\lvert x[n]\rvert^2) < \infty\quad \forall n \,.
+\end{displaymath}
+
+\subsection{The Correlation Matrix}
+%
+Suppose we have a vector
+%
+\begin{displaymath}
+  v[n] = \left[\begin{array}{cccc}
+      x[n] & x[n-1] & \hdots & x[n-(M-1)]
+    \end{array}\right]^\top \,,
+\end{displaymath}
+%
+containing the current value of $x[n]$ and its $M-1$ previous values. We can
+form a matrix from expected value of the outer product of this vector with itself
+%
+\begin{displaymath}
+  \mathbf{R} = \mathbb{E}\left(v[n] v[n]^\top\right)
+  = \mathbb{E}\left(v[n] \otimes v[n]\right) \,,
+\end{displaymath}
+%
+whose $ij\th$ entry is $\mathbf{R}_{ij} = \mathbb{E}(x[j]x[i]) = r(|j-i|)$
+(note that $\mathbb{E}(x[j]x[i]) = \mathbb{E}(x[i]x[j])$ and so the
+absolute distance is required), the
+auto-correlation of the difference between $i$ and $j$. So the above
+matrix is symmetric with equal diagonals, a structure referred to as
+\textbf{Toeplitz}
+%
+\begin{displaymath}
+  \mathbf{R} = \left[\begin{array}{ccccc}
+      r[0] & r[1] & r[2] & \hdots & r[M-1] \\
+      r[1] & r[0] & \ddots & \hdots & r[M-2] \\
+      \vdots & \ddots & \ddots & \hdots & \vdots \\
+      r[M-2] & r[M-3] & \ddots & \hdots & r[1] \\
+      r[M-1] & r[M-2] & r[M-3] & \hdots & r[0]
+    \end{array}\right] \,.
+\end{displaymath}
+%
+$\mathbf{R}$ is positive semi-definite, so that for any vector $\mathbf{x}$,
+$\mathbf{x}^\top\mathbf{Rx}\geq 0$.
+
+\subsection{Special Models for Stochastic Signals}
+%
+There are a number of parametric models for stochastic signals. These
+are discussed in the following sections.
+
+\subsubsection{White Gaussian Noise}
+%
+The Gaussian Noise model says that the signal value
+has a probability distribution function given by
+%
+\begin{displaymath}
+  v[n] \sim \frac{1}{\sigma\sqrt{2\pi}}\ex{-\frac{1}{2\sigma^2}(t-\mu)^2} \,.
+\end{displaymath}
+%
+The White Gaussian Noise model constrains this such that $\mu = 0$, and
+consequently
+%
+\begin{displaymath}
+  \mathbb{E}(v[n]) = 0 \quad\mathrm{and}\quad
+  \mathbb{E}(v[n]v[n-k]) = \left\{\begin{array}{ccl}
+  \sigma_v^2 & & k = 0 \\
+  0 & & k \neq 0
+  \end{array}\right. = \sigma_v^2\delta_{nk} \,,
+\end{displaymath}
+%
+in other words there's no correlation between the noise at two different
+times.
+
+\subsubsection{Moving Average (MA)}
+%
+The MA model says that the signal value is generated by a linear
+combination of noise values
+%
+\begin{displaymath}
+  x[n] = v[n] + b_1v[n-1] + b_2v[n-2] + \hdots + b_qv[n-q] \,,
+\end{displaymath}
+%
+where the $\{b_i\}$ are constant and $\{v[n]\}$ is a White Gaussian
+Noise process. In other words, we're filtering white noise with a
+FIR filter whose taps are given by the $\{b_i\}$ (assuming $b_0 = 1$),
+%
+\begin{displaymath}
+  x[n] = \sum_{\ell=0}^q v[n-\ell]b[\ell] = v * b \,.
+\end{displaymath}
+%
+The notation for a model of this form is MA$(q)$, i.e. a moving average
+model of order $q$.
+
+\subsubsection{Autoregressive (AR)}
+%
+The AR model is both more intuitive and more commonly used. It basically
+says that the signal value is generated from a linear combination of the
+$p$ previous values of the signal plus some noise term,
+%
+\begin{displaymath}
+  x[n] = -a_1x[n-1] - a_2x[n-2] - \hdots - a_px[n-p] + v[n] \,,
+\end{displaymath}
+%
+where the $\{a_i\}$ are constant and $\{v[n]\}$ is a White Gaussian Noise
+process. Since the current value of the signal depends on previous values
+of the signal, it is effectively regressing on itself by the $\{a_i\}$.
+In particular, if we let $a_0 = 1$, then we can formulate the noise
+as the convolution of the signal with the $\{a_i\}$
+%
+\begin{displaymath}
+  v[n] = \sum_{\ell=0}^p x[n-\ell]a[\ell] = x * a \,,
+\end{displaymath}
+%
+which suggests that the process is an IIR filter applied to noise; we're
+saying that the current value of the signal is related to the previous
+value of the signal, offset by some noise process.
+The notation for a model of this form is AR$(p)$, i.e. an autoregressive 
+model of order $p$.\\
+%
+Our task now is to estimate the parameters, $\{a_i\}$ of an AR process,
+and the variance of the noise process, $\sigma^2_v$. It's also possible
+that the order of the model i.e. $p$ is unknown. The Yule-Walker
+equations provide us with a means to do this. First of all, we multiply
+the expression for our model through by a given lag $\ell > 0$,
+%
+\begin{displaymath}
+  x[n]x[n-\ell] + a_1x[n-1]x[n-\ell] + a_2x[n-2]x[n-\ell] + \hdots
+  + a_px[n-p]x[n-\ell] = v[n]x[n-\ell] 
+\end{displaymath}
+%
+and take the expected value of both sides
+%
+\begin{displaymath}
+  r[\ell] + a_1r[\ell-1] + a_2r[\ell - 2] + \hdots + a_pr[\ell - p]
+  = 0 \,,
+\end{displaymath}
+%
+since $\mathbb{E}(v[n]x[n-\ell])$ denotes the covariance the noise
+and previous values of the input, which are independent processes
+and so must be zero. Now, generating a system of these equations
+for $\ell = 1,\hdots,M$, we obtain $M$ equations in $M$ unknowns,
+%
+\begin{displaymath}
+  \left[\begin{array}{ccccc}
+      r[0] & r[1] & r[2] & \hdots & r[p-1] \\
+      r[1] & r[0] & r[1] & \hdots & r[p-2] \\
+      r[2] & r[1] & r[0] & \hdots & r[p-3] \\
+      \vdots & \vdots & \vdots & \hdots & \vdots \\
+      r[p-1] & r[p-2] & r[p-3] & \hdots & r[0]
+    \end{array}\right]
+  \left[\begin{array}{c}
+      a_1 \\ a_2 \\ a_3 \\ \vdots \\ a_p
+    \end{array}\right] =
+  \left[\begin{array}{c}
+      -r[1] \\ -r[2] \\ -r[3] \\ \vdots \\ -r[p]
+    \end{array}\right] \,,
+\end{displaymath}
+%
+where the transformation matrix is simply the autocorrelation matrix,
+and so
+%
+\begin{displaymath}
+  \mathbf{Ra} = \mathbf{r} \,,
+\end{displaymath}
+%
+where $\mathbf{r}$ is the negative autocorrelations from $r[1]$ to
+$r[p]$, and can be solved by simple inversion of $\mathbf{R}$. Of course,
+$\mathbf{R}$ needs to be approximated from a given realisation of data,
+where
+%
+\begin{displaymath}
+  \hat{r}[i] = \frac{1}{N}\sum_{j=1}^N x[j]x[j-i] \,.
+\end{displaymath}
+%
+We still need to estimate the variance of the noise which drives the
+process, $\sigma_v^2$. Recall that when we began discussion of the
+Yule-Walker equation, we created the system of equations to solve for
+$\{a_i\}$ using lags $\ell > 0$. Taking the lag to equal zero now,
+%
+\begin{displaymath}
+  x[n]x[n] + a_1x[n-1] + a_2x[n-2] + \hdots + a_px[n-p] = x[n]x[n] \,,
+\end{displaymath}
+%
+and taking the expectation,
+%
+\begin{align*}
+  \mathbb{E}(v[n]x[n]) &= r[0] + a_1r[1] + a_2r_2 + \hdots + a_pr[p] \\ 
+  &= \mathbb{E}\left(-v[n]\sum_{i=1}^px[n-i] + v[n]\right)
+  = \mathbb{E}(v[n]v[n]) = \sigma_v^2 \,,
+\end{align*}
+%
+since again $v[n]$ and the $x[n-i]$ are not correlated. Since we've already
+estimated the $\{a_i\}$, we have
+%
+\begin{displaymath}
+  \sigma_v^2 = \sum_{k=0}^p a_kr[k] \,.
+\end{displaymath}
+%
+Our final question is then how to find the correct value for $p$.
+Obviously, the model is going to be improved by choosing $p$ to
+be as large as possible, but there should be some value which
+performs adequately well. We begin with the data
+$\{x[0], x[1], \hdots, x[N]\}$ from an experiment, and the
+estimated parameters
+$\hat{\theta}_p = \{a_1, a_2, \hdots, a_p, \sigma_v^2\}$ from solving
+the Yule-Walker equation for an AR$(p)$ model. Then, define the
+log-likelihood of the data given the parameters
+%
+\begin{displaymath}
+  L\left(\hat{\theta}_p\right) =
+  \log P\left(\{x[i]\} \left|\hat{\theta}_p\right.\right)
+\end{displaymath}
+%
+which we look to maximise as a function of $p$, while penalising
+large model orders,
+%
+\begin{displaymath}
+  \argmax_{p} L\left(\hat{\theta}_p\right) - f(m) \,.
+\end{displaymath}
+
+\subsubsection{ARMA}
+%
+The ARMA model is a combination of both the AR and MA processes,
+%
+\begin{align*}
+  x[n] &= v[n] + b_1v[n-1] + \hdots + b_Kv[n-K] + a_1x[n-1] + a_2x[n-2] + \hdots + a_Mx[n-M] \\
+  &= \sum_{\ell=0}^q v[n-\ell]b[\ell] + \sum_{\ell=0}^p x[n-\ell]a[\ell]
+\end{align*}
+%
+The notation for a model of this form is ARMA$(p,q)$, i.e. a model with
+$p$ autoregressive terms and $q$ moving average terms.

@@ -1,0 +1,31 @@
+\section{Lecture 20: The Wiener Filter}
+%
+In the previous lecture, we discussed autoregressive processes,
+a model for the origin of a signal. This says that the current
+value of the signal is related to a set of previous values of
+the signal, plus some additive noise term
+%
+\begin{displaymath}
+  x[n] = -a_1x[n-1] - a_2x[n-2] - \hdots - a_px[n-p] + v[n] \,.
+\end{displaymath}
+%
+It's not too unusual to imagine that, for instance, we can
+predict what the weather will do given some information about
+what the weather has been doing over some period of time, hence
+we can justify our notion that real-world processes depend on
+previous values of the process. We saw that the Yule-Walker
+equations allowed us to parameterise this model.\\
+%
+Today, we'll discuss Wiener filters, also referred to as
+optimal linear discrete-time filters. By optimal we mean that
+given some stochastic process $x[n]$ which is processed by
+a Wiener filter $H$ to yield an output stochastic process $y[n]$,
+$H$ can drive $y[n]$ to a desired output $d[n]$, the error
+$e[n] = d[n] - y[n]$ being provably minimised (in a statistical
+sense). As an example, we can take $d[n] = x[n+1]$, a future value
+of the input sequence. Then, the appropriately designed Wiener
+filter is able to find the optimal estimate of $x[n+1]$, which is
+possible since the AR process tells us that $x[n+1]$ is related
+to the previous values of the signal.
+
+\subsection{Problem Setup}

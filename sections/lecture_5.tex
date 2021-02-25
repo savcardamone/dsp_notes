@@ -262,9 +262,9 @@ delta functions that are spaced by $\omega_0$, as can be see in Figure
   %
 \item (\textbf{Time Shifting}) Time-shifting results in a phase change in the
   spectral coefficients, $x(t-t_0) \Longleftrightarrow X(\omega)\ex{-\im\omega t_0}$.
-\item (\textbf{Real Signals}) If $x(t)$ is real, then $\Re(\omega) = \Re(-\omega)$
-  and $\Im(\omega) = -\Im(-\omega)$, i.e. the real part is even and the imaginary
-  part is odd.
+\item (\textbf{Real Signals}) If $x(t)$ is real, then $\Re(X(\omega)) = \Re(X(-\omega))$
+  and $\Im(X(\omega)) = -\Im(X(-\omega))$, i.e. the real part is even and the imaginary
+  part is odd. Together, this implies Hermitian symmetry, $X(\omega) = X(-\omega)^*$.
 \item (\textbf{Even and Odd Signals}) For real $x(t)$,
   $\mathrm{Even}(x(t)) \Longleftrightarrow \Re(X(\omega))$ and
   $\mathrm{Odd}(x(t)) \Longleftrightarrow \im\Im(X(\omega))$.
@@ -286,6 +286,130 @@ delta functions that are spaced by $\omega_0$, as can be see in Figure
   If $a$ is large, then $x(at)$ is squeezed and $\frac{1}{|a|} X\left(\frac{\omega}{a}\right)$
   is stretched. Conversely, if $a$ is small then the opposite happens.
 \end{enumerate}
+
+\subsection{Analytic Signals}
+%
+Many signals of interest are real-valued; owing to the Hermitian symmetry
+of the spectrums of these signals, the negative frequencies are superfluous
+since $Z(\omega) = Z(-\omega)^*$, and as a result hold no additional
+information. An \textbf{analytic signal} is a signal with no negative
+frequency components in its spectrum, and consequently can be writen
+%
+\begin{displaymath}
+  z(t) = \frac{1}{2\pi}\int_0^\infty \dx{\omega}Z(\omega)\ex{\im\omega t} \,,
+\end{displaymath}
+%
+which facilitates some mathematical manipulations. This (complex) analytic
+signal can be generated through use of the \textbf{Hilbert Transform}, which
+shifts the phase of positive frequencies by $-\pi/2$ and the phase of negative
+frequencies by $\pi/2$ (QQ: Add something on Hilbert Transform). Then, the
+analytic signal is constructed from the real signal $x(t)$ and its Hilbert
+Transform $y(t) = \mathcal{H}[y(t)]$, i.e. $z(t) = x(t) + \im y(t)$.\\
+%
+To see why this works, consider the positive and negative frequency
+components of $x(t)$ at some frequency $\omega_0$,
+%
+\begin{displaymath}
+  x_+(t) = \ex{\im\omega_0 t} \quad\mathrm{and}\quad x_-(t) = \ex{-\im\omega_0 t} \,.
+\end{displaymath}
+%
+Performing the Hilbert transform on these two functions,
+%
+\begin{displaymath}
+  \mathcal{H}[x_+(t)] = y_+(t) = \ex{\im\omega_0 t}\ex{-\im\pi/2} = -\im\ex{\im\omega_0 t}
+  \quad\mathrm{and}\quad
+  \mathcal{H}[x_-(t)] = y_-(t) = \ex{-\im\omega_0 t}\ex{\im\pi/2} = \im\ex{-\im\omega_0 t} \,.
+\end{displaymath}
+%
+Now, constructing the analytic signal,
+%
+\begin{align*}
+  z_+(t) &= x_+(t) + \im y_+(t) = \ex{\im\omega_0 t} - \im^2\ex{\im\omega_0 t} = 2\ex{\im\omega_0 t} \\
+  z_-(t) &= x_-(t) + \im y_-(t) = \ex{-\im\omega_0 t} + \im^2\ex{\im\omega_0 t} = 0 \,,
+\end{align*}
+%
+and we see that the negative frequency component has been filtered out while
+the positive frequency component has a gain of $2$. As such,
+%
+\begin{displaymath}
+  Z(\omega) = 2H(\omega)X(\omega) = \left\{\begin{array}{ccl}
+      2X(\omega) & & \omega > 0 \\
+      X(\omega) & & \omega = 0 \\
+      0 & & \omega < 0
+    \end{array}\right.\,,
+\end{displaymath}
+%
+where $H(\omega)$ is the Heaviside function.
+%
+\begin{exmp}
+  Consider the real signal $x(t) = \cos(\omega_0 t)$. The Hilbert transform of this
+  is
+  %
+  \begin{displaymath}
+    \mathcal{H}[x(t)]
+    = \frac{1}{2}\left[\ex{\im\omega_0 t}\ex{-\im\pi/2} + \ex{-\im\omega_0 t}\ex{\im\pi/2}\right]
+    = \frac{1}{2}\left[\im\ex{-\im\omega_0 t} - \im\ex{\im\omega_0 t}\right]
+    = \sin(\omega_0 t) \,.
+  \end{displaymath}
+  %
+  Then, the analytic signal is
+  %
+  \begin{displaymath}
+    z(t) = \cos(\omega_0 t) + \im\sin(\omega_0 t) = \ex{\im\omega_0 t}
+  \end{displaymath}
+  %
+  In the frequency domain, $X(\omega)$ has impulses at $\pm\omega_0$ with amplitudes
+  $1/2$. For the Hilbert transform, we see that $Y(\omega)$ has an impulses
+  at $\omega_0$ and $-\omega_0$ with amplitudes $-\im/2$ and $\im/2$, respectively. 
+  In constructing the analytic signal, $\im Y(\omega)$ has impulses again at $\omega_0$
+  and $-\omega_0$ but now with amplitudes $1/2$ and $-1/2$, respectively. Finally,
+  the analytic signal $Z(\omega) = X(\omega) + \im Y(\omega)$ has a single unit impulse
+  at $\omega_0$.
+\end{exmp}
+%
+\begin{exmp}
+  A motivating example for the use of analytic signals is some slowly-varying
+  amplitude envelope, $A(t)$, which is mixed with some carrier signal $\cos(\omega_c t)$,
+  where $\omega_c$ is of higher frequency than any of the components of $A(t)$.
+  Assume $A(t)$ is a single low-frequency tone $A(t) = \cos(\omega_a t)$.
+  Then, we have $x(t) = A(t)\cos(\omega_c t) = \cos(\omega_c t)\cos(\omega_a t)$;
+  this is nothing more than amplitude modulation -- on a radio, one tunes into
+  the carrier frequency and $A(t)$ is the associated information content. Our
+  mixed signal is then
+  %
+  \begin{displaymath}
+    x(t) = \frac{1}{4}\left(
+    \ex{\im(\omega_c + \omega_a)t} + \ex{\im(\omega_c - \omega_a)t} +
+    \ex{\im(-\omega_c + \omega_a)t} + \ex{\im(-\omega_c - \omega_a)t}
+    \right) \,.
+  \end{displaymath}
+  %
+  Recalling that $\omega_c > \omega_a$, we can identify the positive frequencies as
+  $\omega_c \pm \omega_a$ while the negative frequencies are at $-\omega_c \pm\omega_a$. The
+  Hilbert transforms are then
+  %
+  \begin{displaymath}
+    y_+(t) = -\frac{\im}{4}\left(\ex{\im(\omega_c + \omega_a)t} + \ex{\im(\omega_c - \omega_a)t}\right) 
+    \quad\mathrm{and}\quad
+    y_-(t) = \frac{\im}{4}\left(\ex{\im(-\omega_c + \omega_a)t} + \ex{\im(-\omega_c - \omega_a)t}\right) \,,
+  \end{displaymath}
+  %
+  such that
+  %
+  \begin{align*}
+    y(t) &= \frac{1}{4\im}\left(
+    \color{red}{\ex{\im(\omega_c + \omega_a)t}} \color{blue}{+ \ex{\im(\omega_c - \omega_a)t}}
+    \color{blue}{-\ex{\im(-\omega_c + \omega_a)t}} \color{red}{- \ex{\im(-\omega_c - \omega_a)t}} 
+    \right) \\
+    &= \frac{1}{2}\left(
+    \color{red}{\sin((\omega_c + \omega_a)t)} \color{blue}{+ \sin((\omega_c - \omega_a)t)}\right)
+    = \sin(\omega_c t)\cos(\omega_a t) = A(t)\sin(\omega_c t) \,.
+  \end{align*}
+  %
+  The analytic signal is then simply
+  $z(t) = A(t)\left[\cos(\omega_c t) + \im\sin(\omega_c t)\right] = A(t)\ex{\im\omega_c t}$.
+  Amplitude demodulation involves nothing more than taking the magnitude of $z(t)$.
+\end{exmp}
 
 \subsection{The Short-Time Fourier Transform}
 %

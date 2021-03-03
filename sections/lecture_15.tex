@@ -70,12 +70,13 @@ course yes, and is referred to as \textbf{multirate signal processing}.
   Let's consider the meaning of $H(z^M)$ for a little insight:
   %
   \begin{displaymath}
-    H(z^M) = \infsum{n} h[n]z^{-Mn} = \mathscr{Z}(h_e[n]) \,,
+    H(z^M) = \infsum{n} h[n]z^{-Mn} = \infsum{k} h[k/M] z^{-k}
+    = \mathscr{Z}(h[k/M]) \,,
   \end{displaymath}
   %
-  where $h_e[n]$ is a zero-padded version of $h[n]$, with $M-1$ zeroes between
-  each sample. Recall that to transform between the $\omega$ and $z$ domains,
-  we have the relationship
+  where $h[k/M]$ is a time-expanded version of $h[n]$, i.e. zero-padded with
+  $M-1$ zeroes between each sample. Transforming between the $\omega$ and $z$
+  domains, we have the relationship
   %
   \begin{displaymath}
     X(\omega) = \left. X(z) \right|_{z = \ex{\im\omega}} \,.
@@ -92,7 +93,7 @@ course yes, and is referred to as \textbf{multirate signal processing}.
   %
   \begin{displaymath}
     \left.H\left(z^M\right)\right|_{z=\ex{\im\omega}}
-    = \infsum x[n]\ex{\im\omega nM} = H(\omega M) \,.
+    = \infsum{n} h[n]\ex{-\im\omega nM} = H(\omega M) \,.
   \end{displaymath}
   %
   We saw in the previous lecture that the downsampling block of $X_b(\omega)$ results in
@@ -154,26 +155,41 @@ course yes, and is referred to as \textbf{multirate signal processing}.
 
 \subsection{The Polyphase Decomposition}
 %
-Consider some signal $h[n]$, an example of which is depicted in Figure QQ. We can think
+Consider some signal $h[n]$, an example of which is depicted in pane (a) of
+Figure \ref{fig::lecture_15_subphase_filters}. We can think
 of this sum as a sum of simpler signals; $h[n]$ is decomposed into a sum of $M$
 subsequences $h_k[n]$, defined as follows,
 %
 \begin{displaymath}
-  h_k[n] = h[k + nM] \,,
+  h_k[n] = \left\{\begin{array}{ccl}
+  h[n+k] & &  n\;\mathrm{mod}\;M = 0 \\
+  0 & & \mathrm{otherwise}
+  \end{array}\right. \,,
 \end{displaymath}
 %
-which is the original sequence delayed by $k$ units and zero-padded with $M-1$ zeroes
-between each of the originally sampled points. This is simplest to understand pictorially;
-for $M=3$, pane (b) of Figure QQ shows the decomposition. We see that the original
-signal is simply the summation of these subsequences,
+i.e. the signal is delayed by $k$ units and every $M\th$ element of $h[n]$ is taken, with $M-1$
+zeroes padding between these values. This is simplest to understand pictorially;
+for $M=3$, pane (b) of Figure \ref{fig::lecture_15_subphase_filters} shows the decomposition.
+We see that the original signal is simply the summation of these subsequences,
 %
 \begin{displaymath}
   h[n] = \sum_{k=0}^{M-1}h_k[n-k] \,.
 \end{displaymath}
 %
+\begin{figure}[H]
+  \includegraphics[width=\textwidth]{images/lecture_15_subphase_filters.JPG}
+  \caption{Decomposition of a signal, $h[n]$, in pane (a) to a series of 3
+    subsequences, $h_0[n], h_1[n]$ and $h_2[n]$, in pane(b), which when shifted and
+    added return the original signal.
+  }
+  \label{fig::lecture_15_subphase_filters}
+\end{figure}
+%
 Let $e_k[n]$ denote a corresponding $h_k[n]$ whose zero-padding has been removed, i.e.
-$e_k[n] = h[nM + k] = h_k[nM]$. These are termed the polyphase components of $h[n]$.
-Now, consider the Z-transform of $h[n]$ and split it into $M$ distinct sums,
+$e_k[n] = h[nM + k] = h_k[nM]$, referred to as the \textbf{subphase filter}, or a
+\textbf{polyphase component} of $h[n]$.
+Now, consider the Z-transform of $h[n]$ and split it into $M$ distinct sums over
+subphase filters,
 %
 \begin{align*}
   H(z) &= \infsum{k} h[k]z^{-k}
@@ -184,39 +200,182 @@ Now, consider the Z-transform of $h[n]$ and split it into $M$ distinct sums,
   = \sum_{k=0}^{M-1}z^{-k}\mathscr{E}_k\left(z^M\right) \,,
 \end{align*}
 %
-where $\mathscr{E}_k\left(z^M\right)$ is the Z-transform of the $k\th$ polyphase
-component shifted by $M$. Using this as a transfer function, we see that the
-$k\th$ term in this summation is the input delayed by $k$ (since
-$X(z)z^{-k} \Longleftrightarrow x[n-k]$) multiplied by the $k\th$ polyphase
-component shifted by $M$, $\mathscr{E}\left(z^M\right)$. Each of these terms
-is then summed to yield the output, $Y(z)$. This is the \textrm{polyphase realisation}
-of $H(z)$.\\
+where $\mathscr{E}_k\left(z^M\right)$ is the Z-transform of the $k\th$ suphase filter
+shifted by $M$. Using this as a transfer function,
+%
+\begin{displaymath}
+  Y(z) = H(z)X(z) = \sum_{k=0}^{M-1}z^{-k}\mathscr{E}_k\left(z^M\right)X(z) \,,
+\end{displaymath}
+%
+we see that the $k\th$ term in this summation is the input $X(z)$ delayed by $k$ (since
+$X(z)z^{-k} \Longleftrightarrow x[n-k]$), multiplied by the $k\th$ subphase filter expanded
+by $M$, $\mathscr{E}\left(z^M\right)$. Each of these terms is then summed to yield the
+output, $Y(z)$. This is the \textrm{polyphase realisation} of $H(z)$.\\
+%
+In an entirely equivalent manner, we can rearrange the above equation so that the
+outputs of each polyphase component are delayed. Consider the case where $M=3$:
+%
+\begin{align*}
+  Y(z) &= \mathscr{E}_0\left(z^3\right)X(z) + z^{-1}\mathscr{E}_1\left(z^3\right)X(z)
+  + z^{-2}\mathscr{E}_0\left(z^3\right)X(z) \\
+  &= \mathscr{E}_0\left(z^3\right)X(z) + z^{-1}\left[
+    \mathscr{E}_1\left(z^3\right)X(z) + z^{-1}\left[
+      \mathscr{E}_2\left(z^3\right)X(z)
+      \right]\right] \,.
+\end{align*}
+%
+This is referred to as the \textbf{transpose polyphase structure}, while the original
+is referred to as the \textbf{direct form}. This seemingly innocent looking manipulation
+is important when we come to consider upsampling.\\
 
-\subsubsection{Polyphase Downsampling}
+To offer a little insight, let's consider how we might generate the subphase filter
+$\mathscr{E}_k\left(z^M\right)$. We said that this is nothing more than the subphase
+filter $\mathscr{E}_k\left(z\right)$ expanded by $M$, i.e. $M-1$ zeroes are placed
+between each of the original elements of $\mathscr{E}_k\left(z\right)$, and consequently
+it has the same length as the original transfer function before we performed the
+polyphase decomposition. To generate $\mathscr{E}_k\left(z\right)$, we need to
+implement the following,
+%
+\begin{displaymath}
+  h[n] \longrightarrow \boxed{z^k}
+  \longrightarrow \boxed{\downarrow M}
+  \longrightarrow e_k[n] \,,
+\end{displaymath}
+%
+so that
+$e_0 = \left[\begin{array}{cccc}h[0] & h[M] & h[2M] & \hdots \end{array}\right]^\top$,
+$e_1 = \left[\begin{array}{cccc}h[1] & h[M+1] & h[2M+1] & \hdots \end{array}\right]^\top$,
+etc. Expanding by $M$ then does nothing more than remove the downsampling by $M$ in
+this schematic, such that
+%
+\begin{displaymath}
+  \mathscr{E}_k\left(z^M\right) = H_k(z) \,.
+\end{displaymath}
+
+\subsection{Polyphase Downsampling}
 %
 Now, let's think again about downsampling, where we prefiltered to prevent aliasing
-then downsampled the signal. By using the polyphase realisation of our prefilter,
-we can implement this as depicted in pane (a) of Figure QQ. The signal is passed
-through $\mathscr{E}_0\left(z^M\right)$ on the first branch; on the second branch, it
-is first delayed by the $z^{-1}$ block, then passed through $\mathscr{E}_1\left(z^M\right)$,
-at which point it is summed with the result from the first branch. This is precisely
-what the first two terms in the summation above represent, and proceeds up to
-$\mathscr{E}_{M-1}\left(z^M\right)$. Once the summation has been completed, the
-downsampling $M$ completes the process and we're left with our downsampled signal.\\
+then downsampled the signal,
 %
-The polyphase realisation of the prefilter doesn't seem to have accomplished much;
-consider a filter of length 400 that we downsample by a factor of 50; there are
-then 50 polyphase components of the filter, each of length 8. For every value of the
-input, this means we need to complete $8\times 50 = 400$ multiplications, exactly
-the same had we kept the prefilter in its original form, albeit we've expressed
-some parallelism. But we recall that the Noble identity for decimation allows
-us to interchange the order of filtering and downsampling while changing the argument
-of the filter from $z^M$ to $z$. This means we can implement the polyphase downsampling
-as depicted in pane (b) of Figure QQ. Now since we downsample first, we pass $M$
-times fewer values through each of the polyphase components, and our complexity
-per input value becomes $400 / 8 = 50$ multiplications. So, the polyphase
-downsampling lets us save a factor of $M$ in computational complexity. This is
-a useful result since the larger the downsampling factor, the more data points
-we're throwing away after having expended computational effort in prefiltering.
-Now the complexity is independent of the downsampling factor, meaning we
-don't waste effort.
+\begin{displaymath}
+  x[n] \longrightarrow \boxed{H_{\mathrm{pre}}}
+  \longrightarrow \boxed{\downarrow M}
+  \longrightarrow y[n] \,.
+\end{displaymath}
+%
+By using the polyphase realisation of our prefilter, we can implement this as depicted in
+pane (a) of Figure \ref{fig::lecture_15_polyphase}.
+The signal $x[n] = \{x[0], x[1], x[2], \hdots\}$ is passed through
+$\mathscr{E}_0\left(z^M\right)$ on the first branch; on the second branch, it
+is first delayed by the $z^{-1}$ block yielding $x[n-1] = \{x[-1], x[0], x[1], \hdots\}$,
+then passed through $\mathscr{E}_1\left(z^M\right)$, at which point it is summed with the
+result from the first branch. This continues up to
+$\mathscr{E}_{M-1}\left(z^M\right)$. Once the summation has been completed, the
+downsampling $M$ completes the process and we're left with our downsampled signal. The
+filtering takes place at a sampling rate of $I_f = I_x$, while at the output after having
+downsampled, we have a sampling rate of $I_y = I_x / M$.\\
+%
+It should be apparent that this is wildly inefficient; the subphase filters
+$\mathscr{E}_k\left(z^M\right)$ contain rather a lot of zeroes that don't contribute
+anything to the convolution. Consider a prefilter of length 400; convolving a signal
+with this requires 400 multiplications and 399 additions per output value. Implementing
+this as a polyphase filter bank where we downsample by a factor of 50, all we've
+accomplished is 50 subphase filters, each of length 400 and requiring the exact
+same computational effort as the original prefilter -- we've just increased the
+number of operations by a factor of 50. But now we recall the Noble identity for
+decimation,
+%
+\begin{displaymath}
+  x[n] \longrightarrow \boxed{H\left(z^M\right)}
+  \longrightarrow \boxed{\downarrow M}
+  \longrightarrow y[n]
+  \quad\Leftrightarrow\quad
+  x[n] \longrightarrow \boxed{\downarrow M}
+  \longrightarrow \boxed{H\left(z\right)}
+  \longrightarrow y[n]
+\end{displaymath}
+%
+This interchange is depicted in pane (b) of Figure \ref{fig::lecture_15_polyphase}.
+Now we can work with the unexpanded subphase filters $\mathscr{E}_k(z)$, thereby
+eliminating all of the multiplications by zero in the filtering and each subphase
+filter now requires 50 multiplications and 49 additions. Furthermore,
+our filtering rate is now $I_f = I_x / M = I_y$, since we downsample before feeding
+the input signal into our subphase filters, thus each subphase filter need do $M$
+times fewer operations for a signal of some fixed duration. We've thereby reduced
+the complexity of our original prefilter by a factor of $M$.\\
+%
+In terms of implementing this, we can realise the delay line and downsampling as a
+commutator which demultiplexes the input line to the different subphase filters with a
+frequency of $I_x / M$. This is depicted in pane (a) of Figure
+\ref{fig::lecture_15_commutator}, and can be realised in hardware.
+%
+\begin{figure}[H]
+  \includegraphics[width=\textwidth]{images/lecture_15_polyphase.JPG}
+  \caption{Polyphase implementations of decimation and interpolation. In pane (a),
+    the na\"{i}ve decimation filter (using the direct form) is given which filters at a
+    rate of $I_x$. By
+    invoking the Noble identity for decimation, the structure in pane (b) results
+    where each subphase filter operates at a rate of $I_x/M$. In pane (c),
+    the na\"{i}ve interpolation filter (using the transpose direct form) is given
+    which filters at a rate of $LI_x$. By
+    invoking the Noble identity for interpolation, the structure in pane (d) results
+    where each subphase filter operates at a rate of $I_x$.
+  }
+  \label{fig::lecture_15_polyphase}
+\end{figure}
+
+\subsection{Polyphase Upsampling}
+%
+The na\"{i}ve implementation of upsampling has been presented as
+%
+\begin{displaymath}
+  x[n] \longrightarrow \boxed{\uparrow L}
+  \longrightarrow \boxed{H_\mathrm{int}}
+  \longrightarrow y[n] \,,
+\end{displaymath}
+%
+and the polyphase realisation of the filter $H_\mathrm{int}$ is given in
+pane (c) of Figure \ref{fig::lecture_15_polyphase}. As with the decimation, we note that the subphase filters
+have a lot of zeroes that contribute nothing to the convolution. Furthermore,
+the upsampling components also insert a number of zeroes into the signals
+that are fed into the subphase filters. The filtering rate here is $I_f = LI_x$.\\
+%
+However, we realise that the direct form polyphase structure doesn't work here
+since the delay $z^{-k}$ that precedes the subphase filter
+$\mathscr{E}_k\left(z^L\right)$ don't commute with the upsampling modules; the
+Noble identity for interpolation only allows us to swap the order of subphase filter and
+upsampling module. Thankfully, we recall that the transpose polyphase structure allows
+us to place the delay lines that accompanies the subphase filters after the filtering.
+Now the upsampling modules and subphase filters are next to one another, and the
+Noble identity allows us to permute their order,
+%
+\begin{displaymath}
+  x[n] \longrightarrow \boxed{\uparrow L}
+  \longrightarrow \boxed{H\left(z^L\right)}
+  \longrightarrow y[n]
+  \quad\Leftrightarrow\quad
+  x[n] \longrightarrow  \boxed{H\left(z\right)}
+  \longrightarrow \boxed{\uparrow L}
+  \longrightarrow y[n]
+\end{displaymath}
+%
+giving us the realisation depicted in pane (d) of Figure \ref{fig::lecture_15_polyphase}.
+The subphase filters no
+longer need to be zero-padded with $L-1$ zeroes, and the filtering rate is the same
+as the input rate, $I_f = I_x$, in spite of the output signal rate being $I_y = LI_x$.
+As with the polyphase decimator, we can turn the delay line and upsampling blocks into
+a commutator that multiplexes from the subphase filters to the output line with a rate
+of $I_y$. This is depicted in pane (b) of Figure \ref{fig::lecture_15_commutator}.
+%
+\begin{figure}[H]
+  \includegraphics[width=\textwidth]{images/lecture_15_commutator.JPG}
+  \caption{Commutator implementations of the polyphase decimation and interpolation.
+    In pane (a), the commutator replaces the delay line and downsampling modules,
+    and demultiplexes at a rate of $I_x/M$, starting from $\mathscr{E}_{M-1}(z)$ and
+    rotating counterclockwise. In pane (b), the commutator replaces the upsampling
+    modules and delay line, multiplexing at a rate of $LI_x$ to the output line
+    from the subphase filters, starting from $\mathscr{E}_0(z)$ and rotating
+    clockwise.
+  }
+  \label{fig::lecture_15_commutator}
+\end{figure}

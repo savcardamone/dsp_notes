@@ -25,6 +25,7 @@
 \usepackage[mathscr]{euscript}
 \usepackage{minted}
 \usepackage{mdframed}
+\usepackage[section]{placeins}
 
 \usetikzlibrary{positioning,circuits.ee.IEC}
 
@@ -49,6 +50,7 @@
 \newcommand{\infsum}[1]{\sum_{#1=-\infty}^\infty}
 \newcommand{\rect}[1]{\Pi\left(#1\right)}
 \newcommand{\ddx}[1]{\frac{\mathrm{d}}{\mathrm{d#1}}}
+\newcommand{\ppx}[1]{\frac{\partial}{\partial#1}}
 
 \newcommand{\red}[1]{\color{red}{#1}}
 \newcommand{\orn}[1]{\color{orange}{#1}}
@@ -69,7 +71,7 @@
 \def\theparagraph{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.\arabic{paragraph}}
 
 \theoremstyle{definition}
-\newtheorem{exmp}{Example}[section]
+\newmdtheoremenv{exmp}{Example}[section]
 \newtheorem{iden}{Identity}[section]
 
 %%%

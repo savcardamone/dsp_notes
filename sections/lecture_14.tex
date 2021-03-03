@@ -105,7 +105,7 @@ the first is that the discrete-time system must be LTI, and the second is
 that the sampler must be above the Nyquist rate of the input -- if we don't
 sample fast enough, then aliasing will be problematic.
 %
-\begin{figure}[!htb]
+\begin{figure}[H]
   \includegraphics[width=\textwidth]{images/lecture_14_filtering_continuous.JPG}
   \caption{Filtering of a continuous-time signal with a low-pass filter.
     The CTFT of band-limited signal, $X_c(\omega)$ is shown in (a), which
@@ -207,7 +207,7 @@ Note that the spreading out that happens as a result of the downsampling can lea
 aliasing -- the original signal would have needed to have been sampled at a minimum of $M$
 times the Nyquist rate to prevent this.
 %
-\begin{figure}[!htb]
+\begin{figure}[H]
   \includegraphics[width=\textwidth]{images/lecture_14_downsample_alias.JPG}
   \caption{The CTFT of the continuous-time signal, $X_c(\omega)$ and its
     discrete-time counterpart, $X(\omega)$, the latter having been acquired
@@ -228,7 +228,7 @@ times the Nyquist rate to prevent this.
   $\pi/3$; downsampling by a factor of 3 then results in no aliasing (see panes (c) and
   (d) of Figure \ref{fig::lecture_14_triangle_example}).
   %
-  \begin{figure}[!htb]
+  \begin{figure}[H]
     \includegraphics[width=\textwidth]{images/lecture_14_triangle_example.JPG}
     \caption{$X(\omega)$ is given in pane (a). When downsampled by a factor of
       3 (pane (b)), the signal is aliased, $X_{\downarrow 3}(\omega)$. Aliasing
@@ -267,7 +267,7 @@ overlapping with anything,
 and so there's no aliasing. In reality, the lowest possible sampling rate is defined more
 by the non-zero bandwidth of the signal rather than its absolute band limit.
 %
-\begin{figure}[!htb]
+\begin{figure}[H]
   \includegraphics[width=\textwidth]{images/lecture_14_undersample.JPG}
   \caption{A qualitative example of a signal which can be downsampled below
     its Nyquist rate without aliasing. The band-limit of the signal is $\omega_B$,
@@ -324,7 +324,7 @@ that the low-pass filter in (c) simply carves out the $2\pi$-periodic copies of
 the spectrum, returning the DTFT of the original signal but upsampled by a factor
 of $L$.
 %
-\begin{figure}[!htb]
+\begin{figure}[H]
   \includegraphics[width=\textwidth]{images/lecture_14_upsample.JPG}
   \caption{The DTFT of the original signal acquired at a sampling period of $T$
     (pane (a)) is upsampled by a factor of $L$ in pane (b), resulting in a scaling

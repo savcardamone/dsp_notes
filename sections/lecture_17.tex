@@ -27,7 +27,7 @@ passband and stopband, and as long as the filter length is
 compatible with these specifications, we can drive the filter
 response to being as desired.\\
 %
-\begin{figure}[!htb]
+\begin{figure}[H]
   \includegraphics[width=\textwidth]{images/lecture_17_equiripple.JPG}
   \caption{A parameterised equiripple filter. The tolerances in the
     pass-band and stop-band are denoted by $\delta_1$ and $\delta_2$
@@ -239,7 +239,7 @@ then follows:
   are indeed $T_2$, and the Remez exchange algorithm has converged. The best
   approximation is then $A(x) = d_0 + d_1 x = - \frac{1}{8} + x$.
   %
-  \begin{figure}[!htb]
+  \begin{figure}[H]
     \includegraphics[width=\textwidth]{images/lecture_17_remez_iteration.JPG}
     \caption{An example of manually performing the Remez exchange algorithm
       to find an $A(\omega) = d_0 + d_1 x$ that best approximates
@@ -280,7 +280,7 @@ means to find the optimal Chebyshev FIR filter given a parameterisation.
   invokes the Remez exchange algorithm to approximate the desired FIR filter.
   Its output is visualised in Figure \ref{fig::lecture_17_remez_example}.
   %
-  \begin{figure}[!htb]
+  \begin{figure}[H]
     \includegraphics[width=\textwidth]{images/lecture_17_remez_example.JPG}
     \caption{The impulse response (left) and its frequency response
       (right) of an $11$-tap FIR filter constructed by the Remez exchange

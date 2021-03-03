@@ -29,3 +29,253 @@ possible since the AR process tells us that $x[n+1]$ is related
 to the previous values of the signal.
 
 \subsection{Problem Setup}
+%
+Consider an IIR causal filter
+%
+\begin{displaymath}
+  y[n] = \sum_{k=0}^\infty h[k]x[n-k] \,,
+\end{displaymath}
+%
+where $x[n], d[n]$ are zero-mean WSS processes, i.e. the moments of
+the signal are time-invariant. We want to minimise some error
+function
+%
+\begin{displaymath}
+  J = \mathbb{E}\left((y[n] - d[n])^2\right) = \mathbb{E}\left((e[n])^2\right) \,.
+\end{displaymath}
+%
+We'll assume everything is real-valued for the sake of simplicity,
+but the following holds for complex-valued signals too. $d[n]$ is
+likely some past or future value of $x[n]$. Our objective then is
+to minimise $J$ over the filter coefficients,
+%
+\begin{displaymath}
+  \ppx{h[k]} J = \mathbb{E}\left(\ppx{e[n]}(e[n])^2\ppx{h[k]}e[n]\right)
+  = \mathbb{E}\left(2e[n]\ppx{h[k]}e[n]\right) = 0
+  \quad \forall k = 0, 1, \hdots\,.
+\end{displaymath}
+%
+Here, the dominated convergence theorem is used to interchange the
+expectation and partial derivative operator, and the chain rule is
+used to obtain the final expression. Expanding the partial derivative
+of $h[k]$,
+%
+\begin{displaymath}
+  \ppx{h[k]}e[n] = \ppx{h[k]}\left(d[n] - \sum_{k=0}^\infty h[k]x[n-k]\right)
+  = - x[n-k] \,,
+\end{displaymath}
+%
+and as a result
+%
+\begin{displaymath}
+  \ppx{h[k]}J = \mathbb{E}\left(-2e[n]x[n-k]\right) = -2\mathbb{E}\left(e[n]x[n-k]\right) \,.
+\end{displaymath}
+%
+Expanding the expression for $e[n]$ and omitting the factor of $2$,
+%
+\begin{align*}
+  \ppx{h[k]}J &= -\mathbb{E}\left(\left(d[n] - \sum_{m=0}^\infty h[m]x[n-m]\right)x[n-k]\right) \\
+  &= -\mathbb{E}\left(d[n]x[n-k]\right) - \sum_{m=0}^\infty h[m]\mathbb{E}\left(x[n-m]x[n-k]\right) \,,
+\end{align*}
+%
+since the filter coefficients are not stochastic. The constituent expected signal products
+are nothing more than covariances, so
+%
+\begin{displaymath}
+  \ppx{h[k]}J = p[-k] - \sum_{m=0}^\infty h[m]r[m-k] = 0
+  \quad\longrightarrow\quad
+  p[-k] = \sum_{m=0}^\infty h[m]r[m-k] \,,
+\end{displaymath}
+%
+where $p[-k] = \mathbb{E}(x[n-k]d[n])$. This system of equations are referred to
+as the \textbf{Wiener-Hopf} equations.
+
+\subsection{Solving The Wiener-Hopf Equations}
+%
+It's not really possible to solve the Wiener-Hopf equations for an IIR filter
+given the infinite filter coefficients that must be solved for. Rather,
+we'll consider an $M$-tap FIR filter, rendering the Wiener-Hopf equations
+solvable,
+%
+\begin{displaymath}
+  p[-k] = \sum_{m=0}^{M-1}h[m]r[m-k] \quad\forall k = 0, 1, \hdots, M-1 \,.
+\end{displaymath}
+%
+This is the same form as the Yule-Walker equations, where
+%
+\begin{displaymath}
+  \mathbf{Rh} = \mathbf{p} \quad\longrightarrow \mathbf{h} = \mathbf{R}^{-1}\mathbf{p} \,,
+\end{displaymath}
+%
+where $\mathbf{R}$ is the Toeplitz autocorrelation matrix of the signal
+$x[n]$, $\mathbf{h}$ is a vector of optimal filter coefficients and
+$\mathbf{p}$ is a vector of correlations between $x[n]$ and $d[n]$.\\
+
+We can explicitly compute the error for this optimal filter
+%
+\begin{align*}
+  J &= \mathbb{E}\left((e[n])^2\right)
+  = \mathbb{E}\left(
+  \left(d[n] - \sum_{k=0}^{M-1}h[k]x[n-k]\right)
+  \left(d[n] - \sum_{m=0}^{M-1}h[m]x[n-m]\right)
+  \right) \\
+  &= \mathbb{E}\left((d[n])^2\right)
+  - \sum_{k=0}^{M-1}h[k]\mathbb{E}\left(x[n-k]d[n]\right)
+  - \sum_{m=0}^{M-1}h[m]\mathbb{E}\left(x[n-m]d[n]\right) \\
+  &\quad+ \sum_{k=0}^{M-1}\sum_{m=0}^{M-1} h[k]h[m]
+  \mathbb{E}\left(x[n-k]x[n-m]\right) \\
+  &= \sigma^2_d - \sum_{k=0}^{M-1}h[k]p[-k] - \sum_{m=0}^{M-1}h[m]p[-m]
+  + \sum_{k=0}^{M-1}\sum_{m=0}^{M-1} h[k]h[m] r[m-k] \\
+  &= \sigma_2^d - 2\sum_{k=0}^{M-1}h[k]p[-k]
+  + \sum_{k=0}^{M-1}\sum_{m=0}^{M-1} h[k]h[m] r[m-k] \\
+  &= \sigma^2_d - 2\mathbf{h}^\top\mathbf{p} + \mathbf{h}^\top\mathbf{Rh} \,,
+\end{align*}
+%
+where $\sigma^2_d$ is the variance of $d[n]$. For the optimal coefficients,
+$\hat{h} = \mathbf{R}^{-1}\mathbf{p}$,
+%
+\begin{align*}
+  \hat{J} &= \sigma^2_d - 2\hat{\mathbf{h}}^\top\mathbf{p}
+  + \hat{\mathbf{h}}^\top\mathbf{R}\hat{\mathbf{h}} \\
+  &= \sigma^2_d - 2\mathbf{p}^\top\mathbf{R}^{-1}\mathbf{p}
+  + \mathbf{p}^\top\mathbf{R}^{-1}\mathbf{RR}^{-1}\mathbf{p}
+  = \sigma^2_d - \mathbf{p}^\top\mathbf{R}^{-1}\mathbf{p} \,,
+\end{align*}
+%
+since $\left(\mathbf{R}^{-1}\right)^\top = \left(\mathbf{R}^\top\right)^{-1}$.
+Thus, the best error that we can obtain with the Wiener filter depends on the
+variance of the desired signal $d[n]$ and the correlations between
+$d[n]$ and $x[n]$. Furthermore,
+%
+\begin{align*}
+  J &= \sigma_d^2 - 2\mathbf{h}^\top\mathbf{p} + \mathbf{h}^\top\mathbf{Rh}
+  = \left(\sigma_d^2 - \mathbf{p}^\top\mathbf{R}^{-1}\mathbf{p}\right)
+  + \left(\mathbf{p}^\top\mathbf{R}^{-1}\mathbf{p} - 2\mathbf{h}^\top\mathbf{p}
+  + \mathbf{h}^\top\mathbf{Rh}\right) \\
+  &= \hat{J} + \left(\mathbf{h} - \mathbf{R}^{-1}\mathbf{p}\right)^\top\mathbf{R}
+  \left(\mathbf{h} - \mathbf{R}^{-1}\mathbf{p}\right)
+  = \hat{J} + \left(\mathbf{h}-\hat{\mathbf{h}}\right)^\top\mathbf{R}
+  \left(\mathbf{h}-\hat{\mathbf{h}}\right) \,,
+\end{align*}
+%
+where the final term is strictly positive since $\mathbf{R}$ is positive
+semi-definite. As a result, $\hat{J}$ must be less than $J$ for any filter
+other than $\hat{\mathbf{h}}$, and consequently must be optimal. Furthermore,
+$\hat{\mathbf{h}}$ must be unique since the final term is only zero when
+$\hat{\mathbf{h}} = \mathbf{h}$. We will see in the next lecture some
+efficient means for finding $\hat{\mathbf{h}}$ that don't require multiplying out
+some potentially large $\mathbf{R}$. 
+
+\subsection{Linear Prediction}
+%
+If $d[n] = x[n]$, then we have a filtering problem; we are trying to
+work out the current value of the signal from its previous values
+up to that point. Alternatively, if $d[n] = x[n+k]$, then we have
+a prediction problem, i.e. we're trying to compute future values of
+the signal based on its previous values. Finally, if $d[n] = x[n-k]$,
+then we have a smoothing problem, where we're inferring a past value
+of the signal given the signal's values around that point.\\
+%
+Consider the prediction problem, where $d[n] = x[n+1]$, and we have
+access to $x[n-1],x[n-2],\hdots,x[n-M]$. This is referred to as a
+one-step-forward linear predictor, and can be solved with the
+Wiener filter
+%
+\begin{displaymath}
+  \hat{x}[n+1] = \sum_{k=0}^M h[k]x[n-k] \,.
+\end{displaymath}
+%
+For the one-step-forward linear predictor, we have
+%
+\begin{displaymath}
+  d[n] = x[n+1] \quad\mathrm{and}\quad e[n] = x[n+1] - \hat{x}[n+1] \,,
+\end{displaymath}
+%
+and we aim to minimise $J = \mathbb{E}\left((e[n])^2\right)$. Invoking
+the Wiener-Hopf equations, we identify
+%
+\begin{displaymath}
+  p[k] = \mathbb{E}\left(x[n-k]x[n+1]\right) = r[k+1] \,,
+\end{displaymath}
+%
+and the error for the optimal $\hat{\mathbf{h}}$ is
+%
+\begin{align*}
+  \hat{J} &= \sigma_d^2 - \mathbf{p}^\top\mathbf{R}^{-1}\mathbf{p}
+  = \mathbb{E}\left((x[n+1])^2\right) - \mathbf{p}^\top\hat{\mathbf{h}} \\
+  &= r[0] - \mathbf{p}^\top\hat{\mathbf{h}} \,,
+\end{align*}
+%
+which in matrix form is given by
+%
+\begin{displaymath}
+  \left[\begin{array}{cc}
+      r[0] & \mathbf{p}^\top \\
+      \mathbf{p} & \mathbf{R}
+    \end{array}\right] = \left[\begin{array}{c}
+      1 \\ -\hat{\mathbf{h}}
+    \end{array}\right] = \left[\begin{array}{c}
+      \hat{J} \\ \mathbf{0}
+    \end{array}\right] \,,
+\end{displaymath}
+%
+where the first equation expresses the relation
+$r[0] - \mathbf{p}^\top\hat{\mathbf{h}} = \hat{J}$ and the second
+defines $\mathbf{p} - \mathbf{R}\hat{\mathbf{h}} = 0$, i.e. that
+$\hat{\mathbf{h}} = \mathbf{R}^{-1}\mathbf{p}$. In doing this,
+we can compute the optimal filter and its error in a single
+matrix equation. We'll find it convenient to express this in
+summation form, so introduce the vector
+%
+\begin{displaymath}
+  \mathbf{a}_M = \left[\begin{array}{c}
+      1 \\ -\hat{\mathbf{h}}
+    \end{array}\right] \,,
+\end{displaymath}
+%
+where again $\hat{\mathbf{h}}$ is the length-$M$ optimal filter. Then,
+%
+\begin{displaymath}
+  \sum_{\ell=0}^M \mathbf{a}_M[\ell] r(\ell - k) = \left\{\begin{array}{ccl}
+  \hat{J} & & k = 0\\ 0 & & k = 1, \hdots, M
+  \end{array}\right. \,,
+\end{displaymath}
+%
+since the Toeplitz matrix $\mathbf{R}$ contains only $M$ unique values.
+
+\subsection{Backward Prediction: Smoothing}
+%
+Choosing $d[n] = x[n-M]$ and attempting to predict this from the
+samples $x[n], x[n-1], \hdots, x[n-M+1]$ is referred to as smoothing,
+or backwards prediction. With a bit of thought, it seems as if this
+should mirror linear prediction to some degree; we can just as easily
+take the $M$ samples preceding $x[n-M]$ and use linear prediction to
+obtain $x[n-M]$. Since the signal is WSS, the quality of the result
+from the backwards and forwards predictions should be equal. In this
+case, Wiener-Hopf gives a similar-looking system for the filter,
+$\mathbf{g}$,
+%
+\begin{displaymath}
+  \mathbf{Rg} = \mathbf{r}^B
+\end{displaymath}
+%
+where $\mathbf{r}^B$
+
+\subsection{The Levinson-Durbin Algorithm}
+%
+Solving these large numerical systems can be rather computationally
+expensive. So, it is prudent to ask whether, given some $M$-tap
+optimal filter $\hat{h}$, can we compute a longer prediction filter
+without having to solve the Wiener-Hopf equations \textit{de novo}.\\
+%
+The Levinson-Durbin algorithm allows us to find the optimal $\mathbf{a}_M$
+from the optimal $\mathbf{a}_{M-1}$ as follows:
+%
+\begin{displaymath}
+  \mathbf{a}_M = \left[\begin{array}{c} \mathbf{a}_{M-1} \\ 0 \end{array}\right]
+  + \Gamma_M \left[\begin{array}{c} 0 \\ \mathbf{a}_{M-1}^B \end{array}\right] \,,
+\end{displaymath}
+%
+where $\Gamma_M$ is the reflection coefficient. $\mathbf{a}_{M-1}$ and
+$\mathbf{a}_{M-1}^B$ are the best forwards and backwards predictions,
+respectively, for length-$M-1$ filters.

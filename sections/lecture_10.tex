@@ -1,5 +1,7 @@
 \section{Lecture 10: The Discrete Fourier Transform}
 
+\subsection{Introduction}
+%
 So far, we have identified that the Fourier Series can be used for
 periodic, continuous-time systems. The Fourier Tranform is to be
 used for aperiodic, continuous-time systems, while the Discrete
@@ -41,6 +43,8 @@ number of output values and the number of basis functions (the complex
 exponentials in our case) leaves the system under- or over-determined,
 and there is no longer any unique solution.
 
+\subsection{The DFT Matrix}
+%
 Define the DFT as
 %
 \begin{equation}
@@ -51,16 +55,16 @@ Define the DFT as
 and its inverse, the IDFT,
 %
 \begin{equation}
-  x[n] = \sum_{k=0}^{N-1}X[k]\ex{\im k\frac{2\pi}{N}n},
+  x[n] = \frac{1}{N}\sum_{k=0}^{N-1}X[k]\ex{\im k\frac{2\pi}{N}n},
   \quad n = 0,1,\hdots, N-1 \,.
 \end{equation}
 %
-We can simplify this notation by introducing the notation
+We can simplify this notation by introducing
 $W_N=\ex{-\im\frac{2\pi}{N}}$, i.e. a point on the unit circle in the
 complex plane whose angle is given by $\frac{2\pi}{N}$. $W_N$ is referred
-to as an $n$\textsuperscript{th} root of unity, since $(W_N)^N = 1$.
+to as an $N\th$ root of unity, since $(W_N)^N = 1$.
 Taking $(W_N)^k$ increments its angle around the unit circle by $k$
-increments of $\frac{2\pi}{N}$. We can now rewrite the DFT,
+units of $\frac{2\pi}{N}$. We can now rewrite the DFT,
 %
 \begin{equation}
   X[k] = \sum_{n=0}^{N-1}x[n]W_N^{kn} \,,
@@ -85,19 +89,41 @@ written in terms of matrix algebra,
       W_N^{N-1,0} & W_N^{N-1,1} & \hdots & W_N^{N-1,N-1}
   \end{array}\right]
   \left[\begin{array}{c}
-      x_1 \\ x_2 \\ \vdots \\ x_{N-1}
+      x_0 \\ x_1 \\ \vdots \\ x_{N-1}
   \end{array}\right]
   = \matr{W}\vec{x} \,,
 \end{displaymath}
 %
-where $\matr{W}\in\mathbb{C}^{N\times N}$ -- $\vec{x}$ and $\vec{X}$ are,
+where $\matr{W}\in\mathbb{C}^{N\times N}$, and is referred to as the
+\textbf{DFT matrix}. $\vec{x}$ and $\vec{X}$ are,
 generally speaking, vectors in $\mathbb{C}^N$, although under certain conditions
-can be real-valued. Note that $\matr{W}$ is, by virtue of the orthogonality of
-the complex exponentials, unitary (the factor of $\frac{1}{\sqrt{N}}$ in the
-IDFT preserves this unitarity, which satisfies Parseval's theorem, i.e. that
-the energy in both time and frequency domains remains the same). Herein we'll omit the
-subscript on the DFT matrix $\matr{W}$ since its size is implied by the lengths of $\vec{x}$
-and $\vec{X}$.\\
+can be real-valued. Note that;
+%
+\begin{itemize}
+\item $\matr{W}$ is, by virtue of the orthogonality of
+  the complex exponentials, unitary (the factor of $\frac{1}{N}$ in the
+  IDFT preserves this unitarity, which satisfies Parseval's theorem, i.e. that
+  the energy in both time and frequency domains remains the same). Herein we'll omit the
+  subscript on the DFT matrix $\matr{W}$ since its size is implied by the lengths of $\vec{x}$
+  and $\vec{X}$.
+\item The DFT matrix has a special structure, where its first row and column
+  contain $W^0$ only, which is one. This type of matrix is referred to as
+  a Vandermonde matrix.
+  
+\end{itemize}
+%
+The matrix formulation gives us a little insight as to what's actually happening with
+the DFT. Consider the value of $X[0]$, which is the inner product of the first row of
+$\mathbf{W}$ and the vector $\mathbf{x}$. The first row of $\mathbf{W}$ is simply
+a vector of ones, and so $X[0]$ is nothing more than the sum of elements of the
+sampled signal, $\mathbf{x}$. Now, take the value of $X[1]$, which is the inner
+product of the second row of $\mathbf{W}$ and the vector $\mathbf{x}$. This second
+row of $\mathbf{W}$ samples each of the $N\th$ roots of unity, so that $x[k]$ is
+multiplied by $W^k$. For $X[2]$, the elements in the third row of $\mathbf{W}$
+sample every other root of unity; $W^0, W^2, W^4, \hdots$, wrapping around
+the unit circle such that $W^N = W^0$. The pattern is then clear; for $X[k]$,
+the input signal is modulated by the $N\th$ roots of unity, starting from $W^0$
+and incrementing by an angle of $2\pi k/N$, accommodating the $2\pi$-periodicity.\\
 
 Consider a finite-length discrete-time signal,
 $\vec{x} = \left[\begin{array}{cccc}x[0] & x[1] & \hdots & x[N-1]\end{array}\right]^\top$.
@@ -115,14 +141,14 @@ only non-zero on the range $[0,N-1]$,
 \end{displaymath}
 %
 Looking at the form of the DFT, we see that the DFT is the DTFT evaluated at
-$\omega = \frac{2\pi k}{N}$,
+$\omega_k = 2\pi k/N$,
 %
 \begin{displaymath}
-  X[k] = X(\frac{2\pi k}{N}), \quad k = 0, 1, \hdots N-1 \,.
+  X[k] = X\left(\frac{2\pi k}{N}\right), \quad k = 0, 1, \hdots N-1 \,.
 \end{displaymath}
 %
 In other words, the frequency response that we obtain via the DFT is the frequency
-response obtained by the DTFT, but sampled at the points $\frac{2\pi k}{N}$ on the
+response obtained by the DTFT, but sampled at the points $2\pi k / N$ on the
 $\omega$ axis. As $N\rightarrow\infty$, we recover the DTFT as the samples are separated
 by an infinitesimal in $\omega$.
 %
@@ -138,26 +164,38 @@ by an infinitesimal in $\omega$.
   i.e. the periodic delta function. From the DFT, we have
   %
   \begin{displaymath}
-    X[k] = \sum_{n=0}^{N-1}x[n] W^{nk} = W^0 = 1 \,,
+    X[k] = \sum_{n=0}^{N-1}x[n] W^{nk} = x[0]W^0 = 1 \,,
   \end{displaymath}
   %
   for all discrete frequencies $k$, as expected. Conversely, inverting this
-  function $X(k) = 1$,
+  function with $X[k] = 1$,
   %
   \begin{displaymath}
-    x[n] = \frac{1}{N}\sum_{k=0}^{N-1}X[k] W^{nk}
-    = \frac{1}{sqrt{N}}\frac{1 - (W^k)^n}{1 - W^k} \,,
+    x[n] = \frac{1}{N}\sum_{k=0}^{N-1}X[k] W^{-nk}
+    = \frac{1}{N}\sum_{k=0}^{N-1}W^{-nk} \,.
   \end{displaymath}
   %
-  as per the finite sum formula. The denominator in this expression
-  is some complex number, but the numerator takes two values depending
-  on the value of $K$: if $k=0$, then $W^0 = 1$ and the above expression
-  simplifies to $x[0] = 1$. If $k\neq 0$, then $(W^n)^k$ is simply $k$
-  full rotations around the unit circle in the complex plane, i.e.
-  $\ex{\frac{-2\pi\im N}{N}} = \ex{-2\pi\im} = 1$, and the above
-  expression simplifies to $x[k] = 0$. In other words, we've recovered
-  the delta function, and we've established the duality of the time-domain
-  signal and the DFT.
+  $x[0]$ is trivial to evaluate since it's equal to a sum of $W^0 = 1$,
+  and our factor of $1/N$ then yields $x[0] = 1$. For $n\neq 0$, we need to
+  invoke the finite sum formula,
+  %
+  \begin{displaymath}
+    x[n] = \frac{1}{N}\sum_{k=0}^{N-1}W^{-nk}
+    = \frac{1}{N}\frac{1-\left(W^{-n}\right)^{(N-1)+1}}{1 - W^{-n}}
+    = \frac{1}{N}\frac{1-W^{-nN}}{1 - W^{-n}} \quad n\neq 0 \,.
+  \end{displaymath}
+  %
+  Note that $W$ to some integer multiple of $N$ corresponds to nothing more
+  than $N$ complete rotations around the complex plane, always yielding $1$,
+  and consequently
+  %
+  \begin{displaymath}
+    x[0] = \frac{1}{N}\frac{1-W^{-nN}}{1 - W^{-n}}
+    = \frac{1}{N}\frac{1-W^0}{1 - W^{-n}}
+    = \frac{1}{N}\frac{0}{1 - W^{-n}} = 0 \quad n\neq 0 \,.
+  \end{displaymath}
+  In other words, we've recovered the delta function, and we've established
+  the duality of the time-domain signal and the DFT.
 \end{exmp}
 %
 The above example uses a key property of the Fourier matrix, referred to
@@ -182,7 +220,7 @@ throughout the remaining discussion:
     \end{array}\right. \,.
   \end{displaymath}
   %
-  The DTFT of this signal is
+  By the finite sum formula, the DTFT of this signal is
   %
   \begin{displaymath}
     X(\omega) = \infsum{n}x[n]\ex{-\im\omega n}
@@ -194,13 +232,13 @@ throughout the remaining discussion:
   %
   \begin{displaymath}
     X(\omega) = \frac{
-      \ex{-\frac{5\im\omega}{2}}\left(\ex{\frac{5\im\omega}{2}} - \ex{-\frac{5\im\omega}{2}}\right)
+      \ex{-5\im\omega/2}\left(\ex{5\im\omega/2} - \ex{-5\im\omega/2}\right)
     }{
-      \ex{-\frac{\im\omega}{2}}\left(\ex{\frac{\im\omega}{2}} - \ex{-\frac{\im\omega}{2}}\right)
+      \ex{-\im\omega/2}\left(\ex{\im\omega/2} - \ex{-\im\omega/2}\right)
     } = \ex{-2\im\omega}\frac{
-      \sin\left(\frac{5\omega}{2}\right)
+      \sin\left(5\omega/2\right)
     }{
-      \sin\left(\frac{\omega}{2}\right)
+      \sin\left(\omega/2\right)
     } \,.
   \end{displaymath}
   %
@@ -209,36 +247,36 @@ throughout the remaining discussion:
   \begin{displaymath}
     X[k] = \sum_{n=0}^9 x[n]W_{10}^{kn} = \sum_{n=0}^4 W_{10}^{kn}
     = \frac{1 - W_{10}^{5k}}{1 - W_{10}}
-    = \frac{1 - \ex{-\im k \frac{2\pi}{10}5}}{1 - \ex{-\im k \frac{2\pi}{10}}} \,,
+    = \frac{1 - \ex{-\pi\im k}}{1 - \ex{-\pi\im k/5}} \,,
   \end{displaymath}
   %
   and doing the same manipulation as before,
   %
   \begin{displaymath}
     X[k] = \frac{
-      \ex{-\im k\frac{\pi}{2}}(\ex{\im k\frac{\pi}{2}} - \ex{\im k\frac{\pi}{2}}) 
+      \ex{-\pi\im k/2}(\ex{\pi\im k/2} - \ex{-\pi\im k/2}) 
     }{
-      \ex{-\im k\frac{\pi}{10}}(\ex{\im k\frac{\pi}{10}} - \ex{\im k\frac{\pi}{10}}) 
-    } = \ex{-\im\frac{4k\pi}{10}} \frac{
-      \sin\left(\frac{\pi k}{2}\right)
+      \ex{-\pi\im k/10}(\ex{\pi\im k/10} - \ex{-\pi\im k/10}) 
+    } = \ex{-2\pi\im k / 5} \frac{
+      \sin\left(\pi k/2\right)
     }{
-      \sin\left(\frac{\pi k}{10}\right)
+      \sin\left(\pi k/10\right)
     } \,.
   \end{displaymath}
   %
   Recalling that the DFT is just the DTFT sampled at the points
-  $\omega = \frac{2\pi k}{N}$, we see that
+  $\omega = 2\pi k/N$, we see that
   %
   \begin{displaymath}
     X(\omega) = \ex{-2\im\omega}\frac{
-      \sin\left(\frac{5\omega}{2}\right)
+      \sin\left(5\omega/2\right)
     }{
-      \sin\left(\frac{\omega}{2}\right)
+      \sin\left(\omega/2\right)
     } =
-    \ex{-\im\frac{4\pi k}{10}}\frac{
-      \sin\left(\frac{\pi k}{2}\right)
+    \ex{-2\pi\im k / 5}\frac{
+      \sin\left(\pi k/2\right)
     }{
-      \sin\left(\frac{\pi k}{10}\right)
+      \sin\left(\pi k/10\right)
     } = X[k] \,,
   \end{displaymath}
   %
@@ -275,6 +313,76 @@ throughout the remaining discussion:
   %
   where $\circledast$ denotes the cyclic convolution. 
 \end{enumerate}
+
+\subsection{Making Sense Of Discrete Frequencies}
+%
+For the Fourier Transform, we expect the spectrum to consist of both positive
+and negative frequencies. However, with the DFT we've simply acquired a list
+of frequencies indexed from $0$ to $N-1$; so where have the negative
+frequency components ended up? Let's consider the case where $N$ is even. Then,
+%
+\begin{displaymath}
+  X[N/2] = \sum_{k=0}^{N-1}x[k]W^{kN/2} = \sum_{k=0}^{N-1}x[k]\ex{-\im\pi k}
+  = \sum_{k=0}^{N-1}(-1)^k x[k] \,,
+\end{displaymath}
+%
+which is strictly real-valued for a real signal; it's just the sum of elements of
+the signal, where each element is multiplied by either $\pm 1$. Now consider the
+frequencies on either side of $x[N/2]$:
+%
+\begin{align*}
+  X\left[\frac{N}{2}+1\right] &= \sum_{k=0}^{N-1}x[k]W^{k\left(\frac{N}{2}+1\right)}
+  = \sum_{k=0}^{N-1}x[k]W^{kN/2}W^{k} = \sum_{k=0}^{N-1}x[k](-1)^{k}W^{k} \\
+  X\left[\frac{N}{2}-1\right] &= \sum_{k=0}^{N-1}x[k]W^{k\left(\frac{N}{2}-1\right)}
+  = \sum_{k=0}^{N-1}x[k]W^{kN/2}W^{-k} = \sum_{k=0}^{N-1}x[k](-1)^{k} W^{-k} \,,
+\end{align*}
+%
+which are equal with the exception of the factor of $W^{\pm k}$. These two expressions
+are no more than the complex conjugates of one another,
+%
+\begin{displaymath}
+  X\left[\frac{N}{2}+1\right] = X\left[\frac{N}{2}-1\right]^* \,,
+\end{displaymath}
+%
+and this pattern persists for any $m = 1,\hdots,\frac{N}{2}-1$,
+%
+\begin{displaymath}
+  X\left[\frac{N}{2}+m\right] = X\left[\frac{N}{2}-m\right]^* \,.
+\end{displaymath}
+%
+From what we know about the Hermitian symmetry of the Fourier Transform, this
+means that $X[N/2]$ must correspond to the central frequency in the DTFT,
+$X(0)$; the fact that this value always satisfies the Hermitian symmetry
+requiring this element be its own complex conjugate. Furthermore, the DC
+component corresponds to $X[0]$ since
+%
+\begin{displaymath}
+  X[0] = \sum_{k=0}^{N-1}x[k] W^{k\times 0} = \sum_{k=0}^{N-1}x[k] \,,
+\end{displaymath}
+%
+the sum of the input signal values. The components $X[1], X[2], \hdots, X[N/2]$
+then form the series of increasing frequencies, with $X[N/2]$ being the
+Nyquist frequency (see later lecture); an alternating sum of signal components.\\
+
+We might also query to what \textit{actual} frequencies do these discretised
+frequencies correspond? We know that $N$ samples in the time domain become
+$N$ samples in the frequency domain. A signal duration $L$ maps to a frequency
+spectrum of width $2B$, where $B$ is the bandwidth of the signal (the factor
+of 2 comes from the fact that we have both positive and negative frequencies).
+From the reciprocity of time and frequency, we know that in the time-domain,
+$L/N = 1/2B$, the interval between samples. Similarly, in the frequency-domain,
+$2B/N = 1/L$, the interval between discrete frequencies. These two conditions
+present us with the same \textbf{reciprocity relation},
+%
+\begin{displaymath}
+  2BL = N \,.
+\end{displaymath}
+%
+So, for instance, if we have a signal of duration $L=1\mathrm{ms}$ and its
+sampled with $1024$ points, the bandwidth of the signal captured by the
+DFT is $1024 / 2\times 10^{-3} = 512\mathrm{kHz}$, and the discrete frequencies
+$X[k]$ are separated by
+$1/10^{-3}\mathrm{secs} = 2\times 512\mathrm{kHz} / 1024 = 1\mathrm{kHz}$.
 
 \subsection{Discrete-Time Convolution}
 %

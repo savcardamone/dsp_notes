@@ -68,7 +68,7 @@ and $X_o[k]$ is the DFT of the odd-indexed elements of $x[n]$. The
 computational process behind computing the $X[k]$ using this partition
 into even and odd DFTs is shown in Figure \ref{fig::lecture_11_dft_one}.
 %
-\begin{figure}[!htb]
+\begin{figure}[H]
   \input{images/lecture_11_dft_one.tikz}
   \caption{DFT for a length-8 signal. DFTs of length $N/2$ are taken for the
     even and odd-indexed elements of $x[n]$ and recombined to compute the full
@@ -88,7 +88,7 @@ We'll require the even and odd parts of $X_e[n]$ ($X_{ee}[n]$ and $X_{eo}[n]$,
 respectively) and $X_o[n]$ ($X_{oe}[n]$ and $X_{oo}[n]$, respectively).
 This scheme is depicted in Figure \ref{fig::lecture_11_dft_two}.
 %
-\begin{figure}[!htb]
+\begin{figure}[H]
   \input{images/lecture_11_dft_two.tikz}
   \caption{DFT for a length-8 signal using length-2 DFTs. DFTs of length $N/4$
     are taken for the even-even, even-odd, odd-even and odd-even indexed elements
@@ -116,7 +116,7 @@ like that depicted in Figure \ref{fig::lecture_11_dft_three}. The operation
 of combining two values to yield two different values (the cross-shaped patterns
 in the DFT figures) are referred to as \textbf{butterflies}.  
 %
-\begin{figure}[!htb]
+\begin{figure}[H]
   \input{images/lecture_11_dft_three.tikz}
   \caption{DFT for a length-8 signal using length-2 DFTs. DFTs of length $N/4$
     are taken for the even-even, even-odd, odd-even and odd-even indexed elements

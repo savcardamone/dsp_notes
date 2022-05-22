@@ -1,0 +1,170 @@
+\section{De/Modulation}
+%
+Virtually the entirety of the electromagnetic spectrum can be manipulated so as
+to carry data. Practically, this means that we have some information carrying
+signal, that we'll call the \textbf{modulation signal}, $s_m(t)$, that we want
+to be placed at/around some designated frequency that we'll call the
+\textbf{carrier signal}, $s_c(t)$. Then, the carrier is effectively impressed
+with the data-carrying signal; this process is referred to as
+\textbf{modulation}, and the opposite process (the extraction of the modulation
+signal from the carrier that has been impressed with the modulation signal) is
+referred to as \textbf{demodulation}.\\
+%
+There are several ways in which this de/modulation can be accomplished, with a
+few being in the common vernacular -- AM and FM, for instance, designate
+modulation schemes that are used in broadcasting. We'll attempt to provide an
+overview of a number of commonly used de/modulation schemes in this section.
+
+\subsection{Amplitude Modulation (AM)}
+%
+Amplitude Modulation is perhaps the simplest modulation scheme to consider.
+Let the modulation and carrier signals be defined by
+%
+\begin{displaymath}
+  s_m(t) = \Re\left\{ A \exp\left[ \im\omega_m t \right] \right\}
+  \qquad\mathrm{and}\qquad
+  s_c(t) = \Re\left\{ \exp\left[ \im\omega_c t \right] \right\} \,,
+\end{displaymath}
+%
+where $\omega_c \gg \omega_m$ (think of radio broadcasting where one tunes into
+the carrier at 90MHz, but audible frequencies are in the range of 20Hz to
+20kHz). Then, upon mixing these two signals, 
+%
+\begin{align*}
+  s(t) &= s_m(t) s_c(t)
+  = \frac{A}{4}\left( \ex{\im\omega_m t} + \ex{-\im\omega_m t}\right)
+  \left(\ex{\im\omega_c t} + \ex{-\im\omega_c t}\right) \\
+  &= \frac{A}{4} \left(
+    {\red{\ex{\im\left(\omega_c + \omega_m\right) t}}} +
+    {\blu{\ex{\im\left(\omega_c - \omega_m\right) t}}} +
+    {\blu{\ex{-\im\left(\omega_c - \omega_m\right) t}}} +
+    {\red{\ex{-\im\left(\omega_c + \omega_m\right) t}}}
+  \right)\\
+  &= \frac{A}{2} \left(
+    {\red{\cos\left(\left(\omega_c + \omega_m\right) t\right)}} +
+    {\blu{\cos\left(\left(\omega_c - \omega_m\right) t\right)}}
+  \right) \,,
+\end{align*}
+%
+we obtain a superposition of signals with frequencies $\omega_c \pm
+\omega_m$.\\
+
+Of course, this frequency mixing generalises to more than single
+frequency modulation signals. As we've previously mentioned, audible frequencies
+span the range $[20,20\times 10 ^3]$Hz, and so to broadcast audio signals,
+$s_m(t)$ has frequency content across this range.\\
+%
+Consider some baseband signal with arbitrary frequency content up to
+$\pm\omega_m$, whose spectrum is designated $S_m(\omega)$. Then
+since mixing in the time domain is convolution in the frequency domain, and our
+carrier signal is a delta $S_c(\omega) = \delta(\omega \pm \omega_c)$, the
+resultant signal is $S(\omega) = S_m(\omega) \ast \delta(\omega \pm \omega_c)$
+which is symmetric about $\omega_c$ with bandwidth $2\omega_m$; the regions
+above and below the carrier are referred to as \textbf{sidebands}, and the
+transmission scheme we've just described is
+\textbf{double-sideband transmission}.\\
+%
+Demodulation of this signal is easily achieved by mixing $s(t)$ with a carrier
+on the receiver side (sometimes referred to as a \textbf{local oscillator}. We
+see that this recovers $s_m(t)$ as follows:
+%
+\begin{align*}
+  s(t) s_c(t) &= \left(
+    {\red{\cos\left(\left(\omega_c + \omega_m\right) t\right)}} +
+    {\blu{\cos\left(\left(\omega_c - \omega_m\right) t\right)}}
+  \right) {\grn{\cos\left(\omega_c t\right)}}\\
+  &= \cancelto{0}{\cos\left(\left( 2\omega_c \pm \omega_m \right)t\right)} +
+    \cos\left(\pm\omega_m t\right) = s_m(t) \,,
+\end{align*}
+%
+where the first term cancels to zero since the signal is low-pass filtered after
+mixing with the carrier. One can avoid mixing with the carrier on the receiver
+side by implementing an amplitude envelope detector, since $s(t)$ is nothing
+more than the carrier whose amplitude envelope is modulated by $s_m(t)$.\\
+
+Clearly there are some inefficiencies in this scheme. Mixing with the carrier
+results in a peaked spectrum of $S(\omega)$ at $\omega_c$, which carries no
+useful information about the modulated signal. One can suppress this frequency
+in $S(\omega)$ through notch filtering, resulting in higher efficiency at the
+transmitter, referred to as
+\textbf{double-sideband suppressed-carrier} (DSB-SC) transmission, although this
+necessitates a more complex receiver since the carrier must be regenerated prior
+to retrieval of the modulated signal.\\
+%
+Another inefficiency is that $S(\omega)$ is symmetric about $\omega_c$, and
+consequently each sideband contains the same information. The signal then has a
+bandwidth of $2\omega_m$, even though only half of this contains useful
+information. One can address this waste of bandwidth through filtering one of
+the sidebands to yield \textbf{single-sideband suppressed-carrier} (SSB-SC)
+transmission, but this once again necessitates a more complex receiver since the
+filtered sideband must be regenerated to retrieve $s_m(t)$.
+
+\subsection{Frequency Modulation (FM)}
+%
+
+\subsection{Phase-Shift Keying (PSK)}
+%
+
+\subsection{Quadrature Amplitude Modulation (QAM)}
+%
+As the name suggests, QAM is something of an extended version of AM. The basic
+premise is that two carriers are used that are in-quadrature ($\pi/2$ radians
+out of phase) with one another, each being modulated with an independent
+baseband signals, $I(t)$ and $Q(t)$, referred to as the in-phase and quadrature
+components.\\
+%
+Let's consider the baseband signals as a single complex baseband signal,
+%
+\begin{displaymath}
+  g(t) = I(t) + \im Q(t) \,,
+\end{displaymath}
+%
+and map onto a complex carrier, $s_c(t) = \ex{\im\omega_c t}$, such that the two
+carriers are just a cosine and sine, and so by definition are in-quadrature with
+one another. Then, mixing these two signals together,
+%
+\begin{align*}
+  s(t) &= g(t) s_c(t) = \left[I(t) + \im Q(t)\right]\ex{\im\omega_c t} =
+    \left[I(t) + \im Q(t)\right]\left[ \cos \omega_c t + \im\sin\omega_c t\right] \\
+  &= {\red{I(t)\cos\omega_c t - Q(t)\sin\omega_c t}} + \im\left[
+    {\blu{I(t)\sin\omega_c t + Q(t)\cos\omega_c t}}
+  \right] \,.
+\end{align*}
+%
+Of course, even though we're working with complex signals, when dealing with
+``real-world'' quantities that get transmitted and received, we have to take the
+real part of the expression, meaning that only the red portion of the above is
+ever manipulated. As a result, the transmitter implementation is
+straightforward: we have parallel inputs $I(t)$ and $Q(t)$ that are mixed
+independently with the in-quadrature carriers $\cos\omega_c t$ and
+$-\sin\omega_ct$, respectively. These two signals are then superimposed and
+transmitted. We've already seen what happens to the individual mixed signals in
+the frequency domain in the section on amplitude modulation, and since the
+Fourier transform is linear, the spectrum of the superposition of signals is
+just the sum of the individual spectra.\\
+
+To demodulate the signal, we must mix the received signal $s(t)$ with the
+conjugate carrier, $\ex{-\im\omega_c t}$ on the receiver end:
+%
+\begin{align*}
+  \Re\left\{s(t)\right\} \ex{-\im\omega_c t} &= \left[
+    I(t)\cos\omega_c t - Q(t)\sin\omega_c t
+  \right] \left[ \cos\omega_c t - \im\sin\omega_c t\right] \\
+  &= I(t) \left[\cos^2\omega_c t -\im\cos\omega_c t \sin\omega_c t\right] -
+    Q(t)\left[ \sin\omega_c t\cos\omega_c t -\im\sin^2\omega_c t\right] \\
+  &= \frac{I(t)}{2}\left[
+    1 + \cos\left(2\omega_c t\right) - \im\sin\left(2\omega_c t\right)
+  \right] + \frac{\im Q(t)}{2}\left[
+    1 - \cos\left(2\omega_c t\right) + \im\sin\left(2\omega_c t\right) 
+  \right] \\
+  &= \frac{I(t) + \im Q(t)}{2} +
+    \cancelto{0}{\mathcal{O}\left( 2\omega_c \right)} \\
+  &= \frac{g(t)}{2}\,,
+\end{align*}
+%
+where we've assumed the mixed result is low-pass filtered to remove the terms
+that have frequency $2\omega_c$. The result is then the complex baseband signal,
+whose individual terms are recovered by mixing either of the in-quadrature
+carriers (remember that in reality there's no such thing as a complex carrier --
+we either mix the cosine or the sine component, recovering $I(t)$ or $Q(t)$,
+respectively).
